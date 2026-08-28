@@ -9,5 +9,5 @@ frontend/dist-vite/
 *.odt
 .~lock.*
 logs
-Notes
+notes
 **/logs
