@@ -1,0 +1,13 @@
+.env
+.env.production
+.env.development
+node_modules
+dist
+frontend/dist-vite/
+*.doc
+*.odp
+*.odt
+.~lock.*
+logs
+Notes
+**/logs
