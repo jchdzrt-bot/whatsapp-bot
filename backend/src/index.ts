@@ -5,9 +5,10 @@ import confirmEnvs from "./utils/server/confirmEnvs";
 export const { server } = createServer();
 
 export const envs = confirmEnvs();
-export const MONGODB_CONNECTION_STRING = envs.ENVIROMENT === 'local'
-  ? `mongodb://127.0.0.1:27017`
-  : `mongodb://${envs.MONGO_USER}:${envs.MONGO_PASSWORD}@${envs.MONGO_HOST}:${envs.MONGO_PORT}`;
+export const MONGODB_CONNECTION_STRING =
+  envs.ENVIROMENT === "local"
+    ? `mongodb://127.0.0.1:27017/${envs.MONGO_DB}`
+    : `mongodb://${envs.MONGO_USER}:${envs.MONGO_PASSWORD}@${envs.MONGO_HOST}:${envs.MONGO_PORT}/${envs.MONGO_DB}?authSource=admin`;
 
 server.listen(envs.PORT, async () => {
   console.log(`Server listening on port ${envs.PORT}`)
