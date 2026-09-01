@@ -1,6 +1,6 @@
 import { Business, type BusinessMongoType } from "../../schemas/businessSchema";
 
-type CreateBusinessArgs = {
+export type CreateBusinessArgs = {
   name: string;
   type: string;
   phoneNumberId: string;

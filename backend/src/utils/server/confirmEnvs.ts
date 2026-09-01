@@ -7,6 +7,7 @@ export default function confirmEnvs() {
     MONGO_HOST: process.env.MONGO_HOST,
     MONGO_PORT: process.env.MONGO_PORT,
     MONGO_DB: process.env.MONGO_DB,
+    X_API_KEY: process.env.X_API_KEY,
   };
 
   const missingEnvs = [];
