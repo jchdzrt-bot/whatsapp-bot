@@ -1,20 +1,22 @@
 import simpleErrorHandling from "../../../utils/error/simpleErrorHandling";
 import { Business, type BusinessMongoType } from "../../schemas/businessSchema";
 
-type AddLocationToBusinessArgs = {
+type MigrateBusinessPhoneNumberIdArgs = {
   businessId: string;
-  locationId: string;
+  phoneNumberId: string;
 };
 
-export default async function addLocationToBusiness({
+export default async function migrateBusinessPhoneNumberId({
   businessId,
-  locationId,
-}: AddLocationToBusinessArgs): Promise<BusinessMongoType | NullOrUndefined> {
+  phoneNumberId,
+}: MigrateBusinessPhoneNumberIdArgs): Promise<
+  BusinessMongoType | NullOrUndefined
+> {
   try {
     const business = await Business.findOneAndUpdate(
       { id: businessId },
-      { $addToSet: { locationIds: locationId } },
-      { new: true, select: "-_id -__v" },
+      { $set: { phoneNumberId } },
+      { new: true },
     );
 
     if (!business) {
@@ -24,6 +26,9 @@ export default async function addLocationToBusiness({
 
     return business.toObject();
   } catch (error) {
-    simpleErrorHandling("Error adding location to business:", error);
+    simpleErrorHandling(
+      `Error on migrating the phoneNumberId for business id: ${businessId}`,
+      error,
+    );
   }
 }

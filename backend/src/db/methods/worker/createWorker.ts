@@ -1,3 +1,4 @@
+import simpleErrorHandling from "../../../utils/error/simpleErrorHandling";
 import { Worker, type WorkerMongoType } from "../../schemas/workerSchema";
 
 export type CreateWorkerArgs = Omit<WorkerMongoType, "id" | "services"> & {
@@ -27,12 +28,6 @@ export default async function createWorker({
 
     return cleanWorker;
   } catch (error) {
-    console.error("Error on adding a Worker:");
-
-    if (error instanceof Error) {
-      console.error(`- ${error.message}`);
-    }
-
-    console.error(error);
+    simpleErrorHandling("Error on adding a Worker:", error);
   }
 }

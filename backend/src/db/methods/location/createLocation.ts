@@ -1,3 +1,4 @@
+import simpleErrorHandling from "../../../utils/error/simpleErrorHandling";
 import { Location, type LocationMongoType } from "../../schemas/locationSchema";
 
 export type CreateLocationArgs = Omit<LocationMongoType, "id" | "workerIds"> & {
@@ -27,12 +28,6 @@ export default async function createLocation({
 
     return cleanLocation;
   } catch (error) {
-    console.error("Error on adding a Location:");
-
-    if (error instanceof Error) {
-      console.error(`- ${error.message}`);
-    }
-
-    console.error(error);
+    simpleErrorHandling("Error on adding a Location:", error);
   }
 }

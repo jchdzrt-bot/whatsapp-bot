@@ -1,3 +1,4 @@
+import simpleErrorHandling from "../../../utils/error/simpleErrorHandling";
 import { Business, type BusinessMongoType } from "../../schemas/businessSchema";
 
 export type CreateBusinessArgs = {
@@ -22,15 +23,9 @@ export default async function createBusiness({
     console.log(`New business created with name: ${name}`);
 
     const { _id, __v, ...cleanBusiness } = newBusiness.toObject();
-    
+
     return cleanBusiness;
   } catch (error) {
-    console.error("Error on adding a Business:");
-    
-    if (error instanceof Error) {
-      console.error(`- ${error.message}`);
-    }
-    
-    console.error(error);
+    simpleErrorHandling("Error on adding a Business:", error);
   }
 }

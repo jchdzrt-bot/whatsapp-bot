@@ -1,18 +1,22 @@
-import { Location } from "../../schemas/locationSchema"
-import { Worker } from "../../schemas/workerSchema"
+import simpleErrorHandling from "../../../utils/error/simpleErrorHandling";
+import { Location, LocationMongoType } from "../../schemas/locationSchema";
+import { Worker } from "../../schemas/workerSchema";
 
 type AddWorkerToLocationArgs = {
-  locationId: string,
-  workerId: string,
-}
+  locationId: string;
+  workerId: string;
+};
 
-export default async function addWorkerToLocation({ locationId, workerId }: AddWorkerToLocationArgs) {
+export default async function addWorkerToLocation({
+  locationId,
+  workerId,
+}: AddWorkerToLocationArgs): Promise<LocationMongoType | NullOrUndefined> {
   try {
     const location = await Location.findOneAndUpdate(
       { id: locationId },
-      { $addToSet: { workerIds: workerId }},
-      { new: true, select: "-_id -__v"}
-    )
+      { $addToSet: { workerIds: workerId } },
+      { new: true, select: "-_id -__v" },
+    );
 
     if (!location) {
       console.error(`No location found with id: ${locationId}`);
@@ -20,14 +24,7 @@ export default async function addWorkerToLocation({ locationId, workerId }: AddW
     }
 
     return location.toObject();
-
   } catch (error) {
-    console.error("Error adding worker to location:");
-    if (error instanceof Error) {
-      console.error(`- ${error.message}`);
-    }
-    
-    console.error(error);
-    return null;
+    simpleErrorHandling("Error adding worker to location:", error);
   }
 }
