@@ -31,7 +31,7 @@ export default async function modifyLocation({
     const location = await Location.findOneAndUpdate(
       { id: locationId },
       { $set: updateFields },
-      { new: true },
+      { new: true, timestamps: true },
     );
 
     if (!location) {

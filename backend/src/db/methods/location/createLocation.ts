@@ -1,7 +1,10 @@
 import simpleErrorHandling from "../../../utils/error/simpleErrorHandling";
 import { Location, type LocationMongoType } from "../../schemas/locationSchema";
 
-export type CreateLocationArgs = Omit<LocationMongoType, "id" | "workerIds"> & {
+export type CreateLocationArgs = Omit<
+  LocationMongoType,
+  "id" | "workerIds" | "createdAt" | "updatedAt"
+> & {
   workerIds?: string[];
 };
 

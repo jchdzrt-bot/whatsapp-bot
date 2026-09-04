@@ -15,7 +15,7 @@ export default async function addWorkerToLocation({
     const location = await Location.findOneAndUpdate(
       { id: locationId },
       { $addToSet: { workerIds: workerId } },
-      { new: true, select: "-_id -__v" },
+      { new: true, select: "-_id -__v", timestamps: true },
     );
 
     if (!location) {

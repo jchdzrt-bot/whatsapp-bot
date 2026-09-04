@@ -14,7 +14,7 @@ export default async function addLocationToBusiness({
     const business = await Business.findOneAndUpdate(
       { id: businessId },
       { $addToSet: { locationIds: locationId } },
-      { new: true, select: "-_id -__v" },
+      { new: true, select: "-_id -__v", timestamps: true },
     );
 
     if (!business) {

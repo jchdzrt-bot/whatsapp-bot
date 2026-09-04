@@ -33,7 +33,7 @@ export default async function modifyWorker({
     const worker = await Worker.findOneAndUpdate(
       { id: locationId },
       { $set: updateFields },
-      { new: true },
+      { new: true, select: "-_id -__v", timestamps: true },
     );
 
     if (!worker) {

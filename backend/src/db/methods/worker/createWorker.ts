@@ -1,7 +1,10 @@
 import simpleErrorHandling from "../../../utils/error/simpleErrorHandling";
 import { Worker, type WorkerMongoType } from "../../schemas/workerSchema";
 
-export type CreateWorkerArgs = Omit<WorkerMongoType, "id" | "services"> & {
+export type CreateWorkerArgs = Omit<
+  WorkerMongoType,
+  "id" | "services" | "createdAt" | "updatedAt"
+> & {
   services?: string[];
 };
 
