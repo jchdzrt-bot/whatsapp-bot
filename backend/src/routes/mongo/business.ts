@@ -30,7 +30,7 @@ businessRouter.post(
     res: Response,
     next: NextFunction,
   ) => {
-    const { name, type, phoneNumberId } = req.body;
+    const { name, type, phoneNumberId, businessPhone } = req.body;
 
     if (!name || !type || !phoneNumberId) {
       return res.status(400).json({
@@ -39,7 +39,12 @@ businessRouter.post(
     }
 
     try {
-      const business = await createBusiness({ name, type, phoneNumberId });
+      const business = await createBusiness({
+        name,
+        type,
+        phoneNumberId,
+        businessPhone,
+      });
 
       res.status(201).json(business);
     } catch (error) {
@@ -81,12 +86,16 @@ businessRouter.patch(
 businessRouter.patch(
   "/:businessId/phoneNumberId",
   async (
-    req: Request<{ businessId: string }, {}, { phoneNumberId: string }>,
+    req: Request<
+      { businessId: string },
+      {},
+      { phoneNumberId: string; businessPhone: string }
+    >,
     res: Response,
     next: NextFunction,
   ) => {
     const { businessId } = req.params;
-    const { phoneNumberId } = req.body;
+    const { phoneNumberId, businessPhone } = req.body;
 
     if (!phoneNumberId) {
       return res.status(400).json({ error: "phoneNumberId is required" });
@@ -96,6 +105,7 @@ businessRouter.patch(
       const business = await migrateBusinessPhoneNumberId({
         businessId,
         phoneNumberId,
+        businessPhone,
       });
 
       if (!business) {

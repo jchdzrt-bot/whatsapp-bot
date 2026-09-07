@@ -9,7 +9,7 @@ export type MongoGenerated = "id" | "createdAt" | "updatedAt";
 
 export type CreateAppointmentArgs = Omit<
   AppointmentMongoType,
-  MongoGenerated | "status"
+  MongoGenerated | "status" | "lastModifiedBy"
 > & {
   status?: APPOINTMENT_STATUS;
 };
