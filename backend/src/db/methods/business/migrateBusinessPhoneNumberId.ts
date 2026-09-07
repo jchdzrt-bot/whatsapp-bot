@@ -3,11 +3,13 @@ import { Business, type BusinessMongoType } from "../../schemas/businessSchema";
 
 type MigrateBusinessPhoneNumberIdArgs = {
   businessId: string;
+  businessPhone: string;
   phoneNumberId: string;
 };
 
 export default async function migrateBusinessPhoneNumberId({
   businessId,
+  businessPhone,
   phoneNumberId,
 }: MigrateBusinessPhoneNumberIdArgs): Promise<
   BusinessMongoType | NullOrUndefined
@@ -15,8 +17,8 @@ export default async function migrateBusinessPhoneNumberId({
   try {
     const business = await Business.findOneAndUpdate(
       { id: businessId },
-      { $set: { phoneNumberId } },
-      { new: true },
+      { $set: { phoneNumberId, businessPhone } },
+      { new: true, select: "-_id -__v", timestamps: true },
     );
 
     if (!business) {

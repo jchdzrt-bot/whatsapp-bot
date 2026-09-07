@@ -1,6 +1,6 @@
 import mongoose, { type Model, Schema } from "mongoose";
 
-enum CONVERSATION_STAGE {
+export enum CONVERSATION_STAGE {
   IDLE = "idle",
   AWAITING_SERVICE = "awaiting_service",
   AWAITING_WORKER = "awaiting_worker",
@@ -9,7 +9,7 @@ enum CONVERSATION_STAGE {
   CONFIRMED = "confirmed",
 }
 
-enum CONVERSATION_HANDLER {
+export enum CONVERSATION_HANDLER {
   BOT = "bot",
   HUMAN = "human",
 }
@@ -17,7 +17,7 @@ enum CONVERSATION_HANDLER {
 export type ConversationMongoType = {
   id: string;
   businessId: string;
-  phoneNumber: string;
+  clientPhone: string;
   stage: CONVERSATION_STAGE;
   handledBy: CONVERSATION_HANDLER;
   data: Record<string, unknown>;
@@ -29,7 +29,7 @@ const conversationSchema = new Schema<ConversationMongoType>(
   {
     id: { type: String, default: () => crypto.randomUUID(), unique: true },
     businessId: { type: String, required: true, index: true },
-    phoneNumber: { type: String, required: true, index: true },
+    clientPhone: { type: String, required: true, index: true },
     stage: {
       type: String,
       enum: Object.values(CONVERSATION_STAGE),

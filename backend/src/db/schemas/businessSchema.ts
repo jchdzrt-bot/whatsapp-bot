@@ -3,6 +3,7 @@ import mongoose, { type Model, Schema } from "mongoose";
 export type BusinessMongoType = {
   id: string;
   name: string;
+  businessPhone: string;
   phoneNumberId: string;
   type: string;
   locationIds: string[];
@@ -14,6 +15,7 @@ const businessSchema = new Schema<BusinessMongoType>(
   {
     id: { type: String, default: () => crypto.randomUUID(), unique: true },
     name: { type: String, required: true },
+    businessPhone: { type: String, required: true },
     phoneNumberId: { type: String, required: true },
     type: { type: String, required: true },
     locationIds: { type: [String], default: [] },

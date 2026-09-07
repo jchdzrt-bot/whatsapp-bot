@@ -4,17 +4,20 @@ import { Business, type BusinessMongoType } from "../../schemas/businessSchema";
 export type CreateBusinessArgs = {
   name: string;
   type: string;
+  businessPhone: string;
   phoneNumberId: string;
 };
 
 export default async function createBusiness({
   name,
   type,
+  businessPhone,
   phoneNumberId,
 }: CreateBusinessArgs): Promise<BusinessMongoType | undefined> {
   const newBusiness = new Business({
     name,
     type,
+    businessPhone,
     phoneNumberId,
   });
 

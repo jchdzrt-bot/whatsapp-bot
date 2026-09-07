@@ -1,13 +1,13 @@
 import mongoose, { type Model, Schema } from "mongoose";
 
-enum APPOINTMENT_STATUS {
+export enum APPOINTMENT_STATUS {
   CONFIRMED = "confirmed",
   CANCELLED = "cancelled",
   NEEDS_RESCHEDULING = "needs_rescheduling",
   COMPLETED = "completed",
 }
 
-enum APPOINTMENT_SOURCE {
+export enum APPOINTMENT_SOURCE {
   BOT = "bot",
   MANUAL = "manual",
 }
@@ -24,6 +24,7 @@ export type AppointmentMongoType = {
   time: string;
   status: APPOINTMENT_STATUS;
   source: APPOINTMENT_SOURCE;
+  lastModifiedBy: APPOINTMENT_SOURCE;
   updatedAt: Date;
   createdAt: Date;
 };
@@ -46,6 +47,11 @@ const appointmentSchema = new Schema<AppointmentMongoType>(
       default: APPOINTMENT_STATUS.CONFIRMED,
     },
     source: {
+      type: String,
+      enum: Object.values(APPOINTMENT_SOURCE),
+      required: true,
+    },
+    lastModifiedBy: {
       type: String,
       enum: Object.values(APPOINTMENT_SOURCE),
       required: true,

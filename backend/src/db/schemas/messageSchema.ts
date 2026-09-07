@@ -1,15 +1,15 @@
 import mongoose, { type Model, Schema } from "mongoose";
 
-enum MESSAGE_DIRECTION {
+export enum MESSAGE_DIRECTION {
   INBOUND = "inbound",
   OUTBOUND = "outbound",
 }
 
-enum MESSAGE_TYPE {
+export enum MESSAGE_TYPE {
   TEXT = "text",
 }
 
-enum MESSAGE_STATUS {
+export enum MESSAGE_STATUS {
   PENDING = "pending", // outbound: sent to Meta, no status webhook yet
   SENT = "sent", // Meta accepted it
   DELIVERED = "delivered", // reached the client's device
@@ -22,7 +22,7 @@ export type MessageMongoType = {
   conversationId: string;
   direction: MESSAGE_DIRECTION;
   body: string;
-  messageType: MESSAGE_TYPE;
+  type: MESSAGE_TYPE;
   whatsappMessageId: string; // Meta's own message ID
   status: MESSAGE_STATUS;
   createdAt: Date;
@@ -38,7 +38,7 @@ const messageSchema = new Schema<MessageMongoType>({
     default: MESSAGE_DIRECTION.INBOUND,
   },
   body: { type: String, required: true },
-  messageType: {
+  type: {
     type: String,
     enum: Object.values(MESSAGE_TYPE),
     required: true,
