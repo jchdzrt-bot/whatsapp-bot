@@ -1,4 +1,5 @@
 import mongoose, { type Model, Schema } from "mongoose";
+import { FLOWS } from "../../bot/constants";
 
 export type BusinessMongoType = {
   id: string;
@@ -9,6 +10,7 @@ export type BusinessMongoType = {
   locationIds: string[];
   createdAt: Date;
   updatedAt: Date;
+  flow: FLOWS;
 };
 
 const businessSchema = new Schema<BusinessMongoType>(
@@ -19,6 +21,12 @@ const businessSchema = new Schema<BusinessMongoType>(
     phoneNumberId: { type: String, required: true },
     type: { type: String, required: true },
     locationIds: { type: [String], default: [] },
+    flow: {
+      type: String,
+      enum: Object.values(FLOWS),
+      required: true,
+      default: FLOWS.APPOINTMENT_V1,
+    },
   },
   {
     timestamps: { createdAt: true, updatedAt: true },
