@@ -30,7 +30,7 @@ businessRouter.post(
     res: Response,
     next: NextFunction,
   ) => {
-    const { name, type, phoneNumberId, businessPhone } = req.body;
+    const { name, type, phoneNumberId, businessPhone, service } = req.body;
 
     if (!name || !type || !phoneNumberId) {
       return res.status(400).json({
@@ -44,6 +44,7 @@ businessRouter.post(
         type,
         phoneNumberId,
         businessPhone,
+        ...(service ? { service } : {}),
       });
 
       res.status(201).json(business);

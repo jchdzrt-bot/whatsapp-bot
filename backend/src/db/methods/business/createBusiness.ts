@@ -1,7 +1,7 @@
 import simpleErrorHandling from "../../../utils/error/simpleErrorHandling";
+import { FLOWS } from "../../../bot/constants";
 import {
   Business,
-  FLOWS,
   type BusinessMongoType,
 } from "../../schemas/businessSchema";
 
@@ -10,6 +10,7 @@ export type CreateBusinessArgs = {
   type: string;
   businessPhone: string;
   phoneNumberId: string;
+  service?: Record<string, string>;
   flow?: FLOWS;
 };
 
@@ -18,6 +19,7 @@ export default async function createBusiness({
   type,
   businessPhone,
   phoneNumberId,
+  service,
   flow = FLOWS.APPOINTMENT_V1,
 }: CreateBusinessArgs): Promise<BusinessMongoType | undefined> {
   const newBusiness = new Business({
@@ -25,6 +27,7 @@ export default async function createBusiness({
     type,
     businessPhone,
     phoneNumberId,
+    service,
     flow,
   });
 

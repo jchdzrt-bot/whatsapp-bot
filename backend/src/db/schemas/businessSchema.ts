@@ -7,6 +7,7 @@ export type BusinessMongoType = {
   businessPhone: string;
   phoneNumberId: string;
   type: string;
+  service: Record<string, string>;
   locationIds: string[];
   createdAt: Date;
   updatedAt: Date;
@@ -20,6 +21,8 @@ const businessSchema = new Schema<BusinessMongoType>(
     businessPhone: { type: String, required: true },
     phoneNumberId: { type: String, required: true },
     type: { type: String, required: true },
+    // Maps a service name to its duration, e.g. { "corte de pelo": "20 min" }.
+    service: { type: Schema.Types.Mixed, default: () => ({}) },
     locationIds: { type: [String], default: [] },
     flow: {
       type: String,

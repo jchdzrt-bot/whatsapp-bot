@@ -22,6 +22,7 @@ export type AppointmentMongoType = {
   service: string;
   date: string;
   time: string;
+  durationMinutes?: number;
   status: APPOINTMENT_STATUS;
   source: APPOINTMENT_SOURCE;
   lastModifiedBy: APPOINTMENT_SOURCE;
@@ -40,6 +41,7 @@ const appointmentSchema = new Schema<AppointmentMongoType>(
     service: { type: String, required: true },
     date: { type: String, required: true },
     time: { type: String, required: true },
+    durationMinutes: { type: Number, required: false },
     status: {
       type: String,
       enum: Object.values(APPOINTMENT_STATUS),

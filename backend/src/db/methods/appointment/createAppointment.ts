@@ -7,6 +7,16 @@ import {
 
 export type MongoGenerated = "id" | "createdAt" | "updatedAt";
 
+const DEFAULT_DURATION_MINUTES = 60;
+
+function timeToMinutes(time: string): number {
+  const [hours, minutes] = time.split(":");
+  return (
+    Number.parseInt(hours ?? "0", 10) * 60 +
+    Number.parseInt(minutes ?? "0", 10)
+  );
+}
+
 export type CreateAppointmentArgs = Omit<
   AppointmentMongoType,
   MongoGenerated | "status" | "lastModifiedBy"
@@ -25,12 +35,22 @@ export default async function createAppointment({
   time,
   status,
   source,
+  durationMinutes,
 }: CreateAppointmentArgs): Promise<AppointmentMongoType | undefined> {
-  const conflict = await Appointment.findOne({
+  const newStart = timeToMinutes(time);
+  const newEnd = newStart + (durationMinutes ?? DEFAULT_DURATION_MINUTES);
+
+  const candidateAppointments = await Appointment.find({
     workerId,
     date,
-    time,
     status: { $ne: APPOINTMENT_STATUS.CANCELLED },
+  });
+
+  const conflict = candidateAppointments.find((appointment) => {
+    const existingStart = timeToMinutes(appointment.time);
+    const existingEnd =
+      existingStart + (appointment.durationMinutes ?? DEFAULT_DURATION_MINUTES);
+    return existingStart < newEnd && existingEnd > newStart;
   });
 
   if (conflict) {
@@ -48,6 +68,7 @@ export default async function createAppointment({
     service,
     date,
     time,
+    durationMinutes,
     status,
     source,
     lastModifiedBy: source,
