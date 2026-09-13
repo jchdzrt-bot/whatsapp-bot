@@ -6,7 +6,7 @@ export default async function getBusinessByPhoneNumber(
 ): Promise<BusinessMongoType | NullOrUndefined> {
   try {
     const business = await Business.findOne(
-      { phoneNumber },
+      { businessPhone: phoneNumber },
       "-_id -__v",
     );
 

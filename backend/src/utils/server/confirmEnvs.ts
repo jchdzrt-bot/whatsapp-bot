@@ -1,6 +1,6 @@
 export default function confirmEnvs() {
   const requiredEnvs = {
-    PORT: process.env.Port,
+    PORT: process.env.PORT,
     ENVIROMENT: process.env.ENVIROMENT,
     MONGO_USER: encodeURIComponent(process.env.MONGO_USER ?? ""),
     MONGO_PASSWORD: encodeURIComponent(process.env.MONGO_PASSWORD ?? ""),
