@@ -11,7 +11,14 @@ type AppointmentV1Result = {
   appointment?: AppointmentMongoType;
 };
 
-type FlowStep = "location" | "service" | "worker" | "date" | "time";
+type FlowStep =
+  | "location"
+  | "service"
+  | "worker"
+  | "date"
+  | "time"
+  | "name"
+  | "confirm_name";
 
 type FlowData = {
   flowStep?: FlowStep;
@@ -26,4 +33,5 @@ type FlowData = {
   timeEndLabel?: string;
   service?: string;
   durationMinutes?: number;
+  name?: string;
 };

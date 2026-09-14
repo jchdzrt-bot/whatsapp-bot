@@ -36,3 +36,5 @@ export const MONTHS_ES = [
 ];
 
 export const INVALID_OPTION_MESSAGE = "Opcion no valida. Intenta de nuevo.\n\n";
+
+export const INVALID_NAME_MESSAGE = "El nombre no es valido. Intenta de nuevo.\n\n";

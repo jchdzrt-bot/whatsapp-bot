@@ -8,6 +8,7 @@ export default function buildConfirmationMessage(data: FlowData): string {
   return [
     "Cita confirmada ✅",
     "",
+    `👤 Cliente: ${data.name ?? "N/A"}`,
     `📍 Sucursal: ${data.locationLabel ?? "N/A"}`,
     `💈 Barbero: ${data.workerLabel ?? "N/A"}`,
     `✂️ Servicio: ${data.service ?? DEFAULT_SERVICE}`,

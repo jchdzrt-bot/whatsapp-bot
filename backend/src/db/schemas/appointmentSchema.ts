@@ -64,6 +64,9 @@ const appointmentSchema = new Schema<AppointmentMongoType>(
   },
 );
 
+// Speeds up the per-location/day views used by the frontend.
+appointmentSchema.index({ locationId: 1, date: 1 });
+
 export const Appointment: Model<AppointmentMongoType> =
   mongoose.models.Appointment ||
   mongoose.model<AppointmentMongoType>("Appointment", appointmentSchema);

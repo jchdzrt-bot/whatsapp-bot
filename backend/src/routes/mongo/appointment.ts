@@ -7,12 +7,45 @@ import {
 import createAppointment, {
   type CreateAppointmentArgs,
 } from "../../db/methods/appointment/createAppointment";
+import getAppointmentsByLocationId from "../../db/methods/appointment/getAppointmentsByLocationId";
 import updateAppointment, {
   type UpdateAppointmentArgs,
 } from "../../db/methods/appointment/updateAppointment";
+import {
+  type APPOINTMENT_STATUS,
+} from "../../db/schemas/appointmentSchema";
 import filterOutUndefinedProperties from "../../utils/object/filterOutUndefinedProperties";
 
 const appointmentRouter = Router();
+
+appointmentRouter.get(
+  "/location/:locationId",
+  async (
+    req: Request<
+      { locationId: string },
+      {},
+      {},
+      { date?: string; status?: string }
+    >,
+    res: Response,
+    next: NextFunction,
+  ) => {
+    const { locationId } = req.params;
+    const { date, status } = req.query;
+
+    try {
+      const appointments = await getAppointmentsByLocationId({
+        locationId,
+        ...(date ? { date } : {}),
+        ...(status ? { status: status as APPOINTMENT_STATUS } : {}),
+      });
+
+      res.status(200).json(appointments ?? []);
+    } catch (error) {
+      next(error);
+    }
+  },
+);
 
 appointmentRouter.post(
   "",

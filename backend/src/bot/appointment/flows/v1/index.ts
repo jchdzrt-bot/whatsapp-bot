@@ -4,8 +4,10 @@ import getConvByClientPhoneAndBusinessId from "../../../../db/methods/conversati
 import updateConversation from "../../../../db/methods/conversation/updateConversation";
 import { CONVERSATION_STAGE } from "../../../../db/schemas/conversationSchema";
 import flowDataOf from "./utils/flowDataOf";
+import handleConfirmName from "./handles/handleConfirmName";
 import handleDateSelection from "./handles/handleDateSelection";
 import handleLocationSelection from "./handles/handleLocationSelection";
+import handleNameSelection from "./handles/handleNameSelection";
 import handleServiceSelection from "./handles/handleServiceSelection";
 import handleTimeSelection from "./handles/handleTimeSelection";
 import handleWorkerSelection from "./handles/handleWorkerSelection";
@@ -75,12 +77,11 @@ export default async function appointmentV1({
     case "date":
       return handleDateSelection(conversation, normalizedMessage);
     case "time":
-      return handleTimeSelection(
-        business,
-        conversation,
-        normalizedMessage,
-        clientName,
-      );
+      return handleTimeSelection(conversation, normalizedMessage);
+    case "name":
+      return handleNameSelection(conversation, normalizedMessage);
+    case "confirm_name":
+      return handleConfirmName(business, conversation, normalizedMessage);
     default:
       if (conversation.stage === CONVERSATION_STAGE.CONFIRMED) {
         if (!isStartCommand(normalizedMessage)) {
