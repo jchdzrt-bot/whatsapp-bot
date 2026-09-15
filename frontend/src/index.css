@@ -1,0 +1,43 @@
+/*
+ * Base styles + design tokens for the frontend.
+ *
+ * The dashboard mockup (notes/design/appointment_dashboard_home.html)
+ * references these CSS custom properties; they are mirrored here so any HTML
+ * fragment can be dropped in, and read by `src/main.tsx` via `./index.css`.
+ */
+:root {
+  --surface-1: #ffffff;
+  --surface-2: #f7f8fa;
+  --border: rgba(13, 23, 42, 0.12);
+  --border-strong: rgba(13, 23, 42, 0.24);
+  --text: #161b26;
+  --text-secondary: #5c6470;
+  --text-muted: #8d94a3;
+  --text-accent: #6d4dc4;
+  --bg-accent: #7c5ad6;
+  --bg-accent-muted: rgba(124, 90, 214, 0.1);
+  --fill-secondary: #eef0f4;
+  --radius: 10px;
+  --bg-tint-violet: rgba(124, 90, 214, 0.12);
+  --text-tint-violet: #6d4dc4;
+  --bg-tint-aqua: rgba(18, 148, 166, 0.12);
+  --text-tint-aqua: #0f8797;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background-color: #f2f4f7;
+  color: var(--text);
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}

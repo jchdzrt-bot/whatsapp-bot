@@ -1,5 +1,5 @@
-import { Box } from "@mui/material";
+import AppointmentDashboard from "../../appointments/AppointmentDashboard";
 
 export default function Appointments() {
-  return <Box>Appointments</Box>
+  return <AppointmentDashboard />;
 }
