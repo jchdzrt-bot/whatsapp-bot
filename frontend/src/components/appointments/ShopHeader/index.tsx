@@ -4,8 +4,13 @@ import { Avatar, Box, Button, Typography } from "@mui/material";
 import { shop, workerFilterLabel } from "../data";
 import { tokens } from "../tokens";
 
+interface ShopHeaderProps {
+  /** Opens the "Nueva cita" modal. */
+  onNewAppointment?: () => void;
+}
+
 /** Barbershop identity + worker filter + "Nueva cita" action. */
-export default function ShopHeader() {
+export default function ShopHeader({ onNewAppointment }: ShopHeaderProps) {
   return (
     <Box
       sx={{
@@ -67,6 +72,7 @@ export default function ShopHeader() {
           size="small"
           variant="contained"
           startIcon={<Add sx={{ fontSize: 13 }} />}
+          onClick={onNewAppointment}
           sx={{
             boxSizing: "border-box",
             height: 32,

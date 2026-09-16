@@ -22,6 +22,9 @@
   --text-tint-violet: #6d4dc4;
   --bg-tint-aqua: rgba(18, 148, 166, 0.12);
   --text-tint-aqua: #0f8797;
+  --bg-success: rgba(46, 160, 67, 0.1);
+  --text-success: #1a7f37;
+  --text-danger: #c92936;
 }
 
 * {

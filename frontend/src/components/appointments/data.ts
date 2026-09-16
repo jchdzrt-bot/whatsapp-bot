@@ -39,6 +39,15 @@ export const shop = {
 
 export const workerFilterLabel = "Todos los trabajadores";
 
+/** Options for the "Nueva cita" modal (static placeholder data). */
+export const workers = ["Ana", "Luis"];
+
+export const services = ["Corte de cabello · 30 min", "Barba · 15 min"];
+
+export const appointmentTimes = ["9:00", "9:30", "10:00", "10:30"];
+
+export const defaultAppointmentDate = "2026-09-10";
+
 export const stats = [
   { label: "Citas hoy", value: 7 },
   { label: "Esta semana", value: 34 },

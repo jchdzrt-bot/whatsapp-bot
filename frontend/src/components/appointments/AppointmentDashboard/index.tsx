@@ -1,4 +1,6 @@
 import { Box, Paper, Typography } from "@mui/material";
+import { useState } from "react";
+import NewAppointment from "../NewAppointment";
 import { calendarHint } from "../data";
 import ShopHeader from "../ShopHeader";
 import StatsCards from "../StatsCards";
@@ -25,6 +27,8 @@ const srOnlySx = {
  * Pure UI — data is static and wired later to the redux store/backend.
  */
 export default function AppointmentDashboard() {
+  const [newAppointmentOpen, setNewAppointmentOpen] = useState(false);
+
   return (
     <Paper
       elevation={0}
@@ -39,7 +43,7 @@ export default function AppointmentDashboard() {
         Panel de citas: calendario semanal con citas y botón para agregar nuevas
       </Box>
 
-      <ShopHeader />
+      <ShopHeader onNewAppointment={() => setNewAppointmentOpen(true)} />
       <StatsCards />
       <WeekNavigator />
       <WeeklyCalendar />
@@ -54,6 +58,11 @@ export default function AppointmentDashboard() {
       >
         {calendarHint}
       </Typography>
+
+      <NewAppointment
+        open={newAppointmentOpen}
+        onClose={() => setNewAppointmentOpen(false)}
+      />
     </Paper>
   );
 }
