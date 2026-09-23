@@ -1,13 +1,67 @@
-import { Box, Button, Paper, TextField, Typography } from "@mui/material";
+import { useEffect, useState, type FormEvent } from "react";
+import { useNavigate } from "react-router-dom";
+import {
+  Box,
+  Button,
+  CircularProgress,
+  Paper,
+  TextField,
+  Typography,
+} from "@mui/material";
 import { tokens } from "../../appointments/tokens";
+import { getLoginErrorMessage, login } from "../../../api/auth";
+import {
+  authLoggedIn,
+  isAuthenticated,
+} from "../../../store/auth/authSlice";
+import { useAppDispatch, useAppSelector } from "../../../store/hooks";
 
 /**
- * Simple login page.
+ * Login page.
  *
- * Design-only for now: fields are uncontrolled (no useState) and the submit
- * button does nothing yet. Auth will be wired to the redux store/backend later.
+ * Controlled form that posts email + password to the backend /auth/login
+ * route (via src/api/auth.ts). The backend plants the access/refresh token
+ * pair in httpOnly cookies, so the redux store only keeps the returned user
+ * profile (persisted to localStorage so a reload restores the session). On
+ * success the user is taken back home.
  */
 export default function Login() {
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
+  const alreadyAuthenticated = useAppSelector(isAuthenticated);
+
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  // A session was already restored from localStorage — skip the form.
+  useEffect(() => {
+    if (alreadyAuthenticated) navigate("/");
+  }, [alreadyAuthenticated, navigate]);
+
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+
+    if (!email.trim() || !password) {
+      setErrorMessage("Introduce el correo y la contraseña");
+      return;
+    }
+
+    setSubmitting(true);
+    setErrorMessage(null);
+
+    try {
+      const session = await login({ email: email.trim(), password });
+      dispatch(authLoggedIn(session));
+      navigate("/");
+    } catch (error) {
+      setErrorMessage(getLoginErrorMessage(error));
+    } finally {
+      setSubmitting(false);
+    }
+  }
+
   return (
     <Box
       sx={{
@@ -21,7 +75,7 @@ export default function Login() {
       <Paper
         elevation={0}
         component="form"
-        onSubmit={(event) => event.preventDefault()}
+        onSubmit={handleSubmit}
         sx={{
           width: "100%",
           maxWidth: 380,
@@ -46,6 +100,8 @@ export default function Login() {
             type="email"
             autoComplete="email"
             placeholder="tu@correo.com"
+            value={email}
+            onChange={(event) => setEmail(event.target.value)}
           />
           <TextField
             fullWidth
@@ -54,13 +110,16 @@ export default function Login() {
             type="password"
             autoComplete="current-password"
             placeholder="••••••••"
+            value={password}
+            onChange={(event) => setPassword(event.target.value)}
           />
         </Box>
 
         <Button
-          type="button"
+          type="submit"
           variant="contained"
           fullWidth
+          disabled={submitting}
           sx={{
             boxSizing: "border-box",
             mt: 2.5,
@@ -74,10 +133,32 @@ export default function Login() {
               bgcolor: tokens.color.accentText,
               boxShadow: "none",
             },
+            "&:disabled": {
+              bgcolor: tokens.color.accentMutedBg,
+              color: "#ffffff",
+              boxShadow: "none",
+            },
           }}
         >
-          Iniciar sesión
+          {submitting ? (
+            <CircularProgress size={18} color="inherit" />
+          ) : (
+            "Iniciar sesión"
+          )}
         </Button>
+
+        {errorMessage && (
+          <Typography
+            sx={{
+              fontSize: 13,
+              color: tokens.color.dangerText,
+              mt: 1.5,
+              textAlign: "center",
+            }}
+          >
+            {errorMessage}
+          </Typography>
+        )}
       </Paper>
     </Box>
   );

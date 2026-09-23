@@ -6,11 +6,11 @@ import {
 } from "express";
 import createConversation, {
   type CreateConversationArgs,
-} from "../../db/methods/conversation/createConversation";
+} from "../../../db/methods/conversation/createConversation";
 import updateConversation, {
   UpdateConversationArgs,
-} from "../../db/methods/conversation/updateConversation";
-import filterOutUndefinedProperties from "../../utils/object/filterOutUndefinedProperties";
+} from "../../../db/methods/conversation/updateConversation";
+import filterOutUndefinedProperties from "../../../utils/object/filterOutUndefinedProperties";
 
 const conversationRouter = Router();
 

@@ -6,15 +6,15 @@ import {
 } from "express";
 import createAppointment, {
   type CreateAppointmentArgs,
-} from "../../db/methods/appointment/createAppointment";
-import getAppointmentsByLocationId from "../../db/methods/appointment/getAppointmentsByLocationId";
+} from "../../../db/methods/appointment/createAppointment";
+import getAppointmentsByLocationId from "../../../db/methods/appointment/getAppointmentsByLocationId";
 import updateAppointment, {
   type UpdateAppointmentArgs,
-} from "../../db/methods/appointment/updateAppointment";
+} from "../../../db/methods/appointment/updateAppointment";
 import {
   type APPOINTMENT_STATUS,
-} from "../../db/schemas/appointmentSchema";
-import filterOutUndefinedProperties from "../../utils/object/filterOutUndefinedProperties";
+} from "../../../db/schemas/appointmentSchema";
+import filterOutUndefinedProperties from "../../../utils/object/filterOutUndefinedProperties";
 
 const appointmentRouter = Router();
 

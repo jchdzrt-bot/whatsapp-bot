@@ -1,6 +1,9 @@
 import simpleErrorHandling from "../../../utils/error/simpleErrorHandling";
 import verifyPassword from "../../../utils/password/verifyPassword";
-import signToken from "../../../utils/jwt/signToken";
+import {
+  signAccessToken,
+  signRefreshToken,
+} from "../../../utils/jwt/signToken";
 import {
   User,
   type UserMongoType,
@@ -12,7 +15,8 @@ export type LoginUserArgs = {
 };
 
 export type LoginUserResult = {
-  token: string;
+  accessToken: string;
+  refreshToken: string;
   user: Omit<UserMongoType, "passwordHash">;
 };
 
@@ -46,12 +50,14 @@ export default async function loginUser({
 
     const { passwordHash, ...cleanUser } = updatedUser.toObject();
 
+    // Sign a short-lived access token plus a long-lived refresh token. The
+    // "type" claim keeps each token scoped to its purpose (see
+    // utils/jwt/signToken.ts).
+    const { id, businessId, role } = cleanUser;
+
     return {
-      token: signToken({
-        id: cleanUser.id,
-        businessId: cleanUser.businessId,
-        role: cleanUser.role,
-      }),
+      accessToken: signAccessToken({ id, businessId, role }),
+      refreshToken: signRefreshToken({ id, businessId, role }),
       user: cleanUser,
     };
   } catch (error) {

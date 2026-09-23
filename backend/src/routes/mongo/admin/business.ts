@@ -6,10 +6,10 @@ import {
 } from "express";
 import createBusiness, {
   type CreateBusinessArgs,
-} from "../../db/methods/business/createBusiness";
-import addLocationToBusiness from "../../db/methods/business/addLocationToBusiness";
-import getAllBusinesses from "../../db/methods/business/getAllBusinesses";
-import migrateBusinessPhoneNumberId from "../../db/methods/business/migrateBusinessPhoneNumberId";
+} from "../../../db/methods/business/createBusiness";
+import addLocationToBusiness from "../../../db/methods/business/addLocationToBusiness";
+import getAllBusinesses from "../../../db/methods/business/getAllBusinesses";
+import migrateBusinessPhoneNumberId from "../../../db/methods/business/migrateBusinessPhoneNumberId";
 
 const businessRouter = Router();
 
