@@ -1,6 +1,6 @@
 /**
  * Design tokens that mirror the CSS custom properties referenced by the
- * dashboard mockup (notes/design/appointment_dashboard_home.html).
+ * dashboard mockups (notes/design/*.html).
  *
  * Values are hardcoded for now because no global MUI theme is configured yet.
  * When the app grows a real theme, these can be mapped to palette entries.
@@ -14,6 +14,7 @@ export const tokens = {
   color: {
     surface1: "#ffffff",
     surface2: "#f7f8fa",
+    surface3: "#eef1f4",
     borderSoft: "rgba(13, 23, 42, 0.08)",
     border: "rgba(13, 23, 42, 0.12)",
     borderStrong: "rgba(13, 23, 42, 0.24)",
@@ -23,6 +24,7 @@ export const tokens = {
     accent: "#7c5ad6",
     accentText: "#6d4dc4",
     accentMutedBg: "rgba(124, 90, 214, 0.1)",
+    accentSolid: "#7c5ad6",
     fillSecondary: "#eef0f4",
     fillSecondaryHover: "#e3e6ec",
     successBg: "rgba(46, 160, 67, 0.1)",
@@ -32,5 +34,9 @@ export const tokens = {
     tintVioletText: "#6d4dc4",
     tintAquaBg: "rgba(18, 148, 166, 0.12)",
     tintAquaText: "#0f8797",
+    tintCoralBg: "rgba(225, 106, 73, 0.12)",
+    tintCoralText: "#c9553b",
+    tintMintBg: "rgba(18, 150, 84, 0.12)",
+    tintMintText: "#0f8a4d",
   },
 } as const;

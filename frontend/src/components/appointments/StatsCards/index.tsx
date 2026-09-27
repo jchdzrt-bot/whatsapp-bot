@@ -1,6 +1,6 @@
 import { Box, Paper, Typography } from "@mui/material";
 import { stats } from "../data";
-import { tokens } from "../tokens";
+import { tokens } from "../../tokens";
 
 /** Row of quick-stat cards: hoy / semana / por confirmar. */
 export default function StatsCards() {

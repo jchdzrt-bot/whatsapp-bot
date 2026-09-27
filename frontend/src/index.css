@@ -8,6 +8,7 @@
 :root {
   --surface-1: #ffffff;
   --surface-2: #f7f8fa;
+  --surface-3: #eef1f4;
   --border: rgba(13, 23, 42, 0.12);
   --border-strong: rgba(13, 23, 42, 0.24);
   --text: #161b26;
@@ -16,12 +17,17 @@
   --text-accent: #6d4dc4;
   --bg-accent: #7c5ad6;
   --bg-accent-muted: rgba(124, 90, 214, 0.1);
+  --bg-accent-solid: #7c5ad6;
   --fill-secondary: #eef0f4;
   --radius: 10px;
   --bg-tint-violet: rgba(124, 90, 214, 0.12);
   --text-tint-violet: #6d4dc4;
   --bg-tint-aqua: rgba(18, 148, 166, 0.12);
   --text-tint-aqua: #0f8797;
+  --bg-tint-coral: rgba(225, 106, 73, 0.12);
+  --text-tint-coral: #c9553b;
+  --bg-tint-mint: rgba(18, 150, 84, 0.12);
+  --text-tint-mint: #0f8a4d;
   --bg-success: rgba(46, 160, 67, 0.1);
   --text-success: #1a7f37;
   --text-danger: #c92936;

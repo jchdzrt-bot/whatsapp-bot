@@ -11,9 +11,11 @@ import addLocationToBusiness from "../../../db/methods/business/addLocationToBus
 import getAllBusinesses from "../../../db/methods/business/getAllBusinesses";
 import migrateBusinessPhoneNumberId from "../../../db/methods/business/migrateBusinessPhoneNumberId";
 
-const businessRouter = Router();
+// The admin routes are used by the admin of the whole app to setup business with their locations and workers.
 
-businessRouter.get("/all", async (_, res, next) => {
+const admingBusinessRouter = Router();
+
+admingBusinessRouter.get("/all", async (_, res, next) => {
   try {
     const businesses = await getAllBusinesses();
 
@@ -23,7 +25,7 @@ businessRouter.get("/all", async (_, res, next) => {
   }
 });
 
-businessRouter.post(
+admingBusinessRouter.post(
   "",
   async (
     req: Request<{}, {}, CreateBusinessArgs>,
@@ -54,7 +56,7 @@ businessRouter.post(
   },
 );
 
-businessRouter.patch(
+admingBusinessRouter.patch(
   "/:businessId/locations",
   async (
     req: Request<{ businessId: string }, {}, { locationId: string }>,
@@ -84,7 +86,7 @@ businessRouter.patch(
   },
 );
 
-businessRouter.patch(
+admingBusinessRouter.patch(
   "/:businessId/phoneNumberId",
   async (
     req: Request<
@@ -122,4 +124,4 @@ businessRouter.patch(
   },
 );
 
-export default businessRouter;
+export default admingBusinessRouter;

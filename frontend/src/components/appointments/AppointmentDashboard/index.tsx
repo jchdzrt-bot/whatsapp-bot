@@ -6,7 +6,7 @@ import ShopHeader from "../ShopHeader";
 import StatsCards from "../StatsCards";
 import WeekNavigator from "../WeekNavigator";
 import WeeklyCalendar from "../WeeklyCalendar";
-import { tokens } from "../tokens";
+import { tokens } from "../../tokens";
 
 /** Visually hidden heading, mirrors the `sr-only` h2 in the design mockup. */
 const srOnlySx = {

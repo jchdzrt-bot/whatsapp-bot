@@ -8,7 +8,7 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { tokens } from "../../appointments/tokens";
+import { tokens } from "../../tokens";
 import { getLoginErrorMessage, login } from "../../../api/auth";
 import {
   authLoggedIn,

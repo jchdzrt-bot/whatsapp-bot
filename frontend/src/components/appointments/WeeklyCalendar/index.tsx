@@ -1,7 +1,7 @@
 import { Box, Paper } from "@mui/material";
 import AppointmentChip from "../AppointmentChip";
 import { days, timeSlots } from "../data";
-import { tokens } from "../tokens";
+import { tokens } from "../../tokens";
 
 /** Time gutter width + 7 weekday columns (same for header and rows). */
 const GRID_TEMPLATE = "56px repeat(7, minmax(0, 1fr))";

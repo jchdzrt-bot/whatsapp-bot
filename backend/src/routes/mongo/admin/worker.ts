@@ -4,12 +4,12 @@ import {
   type Response,
   Router,
 } from "express";
-import addWorker from "../../db/methods/worker/addWorker";
-import { type CreateWorkerArgs } from "../../db/methods/worker/createWorker";
+import addWorker from "../../../db/methods/worker/addWorker";
+import { type CreateWorkerArgs } from "../../../db/methods/worker/createWorker";
 
-const workerRouter = Router();
+const adminWorkerRouter = Router();
 
-workerRouter.post(
+adminWorkerRouter.post(
   "",
   async (
     req: Request<{}, {}, CreateWorkerArgs>,
@@ -27,7 +27,7 @@ workerRouter.post(
     }
 
     try {
-      const worker = addWorker({
+      const worker = await addWorker({
         locationId,
         firstName,
         lastName,
@@ -42,4 +42,4 @@ workerRouter.post(
   },
 );
 
-export default workerRouter;
+export default adminWorkerRouter;

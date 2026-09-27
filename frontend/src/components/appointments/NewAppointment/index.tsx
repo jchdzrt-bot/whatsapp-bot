@@ -5,7 +5,7 @@ import Whatsapp from "@mui/icons-material/Whatsapp";
 import { Box, Button, Dialog, IconButton, MenuItem, Select, TextField, Typography } from "@mui/material";
 import { useState } from "react";
 import { appointmentTimes, defaultAppointmentDate, services, shop, workers } from "../data";
-import { tokens } from "../tokens";
+import { tokens } from "../../tokens";
 
 type AppointmentOrigin = "bot" | "manual";
 

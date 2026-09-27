@@ -23,7 +23,7 @@ export default function cors(req: Request, res: Response, next: NextFunction) {
   res.set("Access-Control-Allow-Methods", "GET,POST,PATCH,DELETE,OPTIONS");
   res.set(
     "Access-Control-Allow-Headers",
-    "Content-Type, x-api-key, Authorization",
+    "Content-Type, x-api-key, Authorization, x-tenant-id, x-location-id",
   );
   res.set("Access-Control-Max-Age", "86400");
 

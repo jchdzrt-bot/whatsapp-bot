@@ -1,7 +1,7 @@
 import { Box } from "@mui/material";
 import type { ReactNode } from "react";
 import type { AppointmentTint } from "../data";
-import { tokens } from "../tokens";
+import { tokens } from "../../tokens";
 
 const TINT_STYLES: Record<AppointmentTint, { bgcolor: string; color: string }> = {
   violet: { bgcolor: tokens.color.tintVioletBg, color: tokens.color.tintVioletText },

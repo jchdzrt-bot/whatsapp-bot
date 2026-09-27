@@ -2,7 +2,7 @@ import Add from "@mui/icons-material/Add";
 import KeyboardArrowDown from "@mui/icons-material/KeyboardArrowDown";
 import { Avatar, Box, Button, Typography } from "@mui/material";
 import { shop, workerFilterLabel } from "../data";
-import { tokens } from "../tokens";
+import { tokens } from "../../tokens";
 
 interface ShopHeaderProps {
   /** Opens the "Nueva cita" modal. */

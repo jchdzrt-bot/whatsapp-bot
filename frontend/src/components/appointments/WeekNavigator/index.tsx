@@ -2,7 +2,7 @@ import ChevronLeft from "@mui/icons-material/ChevronLeft";
 import ChevronRight from "@mui/icons-material/ChevronRight";
 import { Box, Button, IconButton, Typography } from "@mui/material";
 import { weekRangeLabel } from "../data";
-import { tokens } from "../tokens";
+import { tokens } from "../../tokens";
 
 const VIEWS = ["Semana", "Día"] as const;
 

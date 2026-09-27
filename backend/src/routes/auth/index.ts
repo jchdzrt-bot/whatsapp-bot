@@ -12,9 +12,6 @@ import { envs } from "../../index";
 
 const authRouter = Router();
 
-// Validates the user's credentials and hands back an access + refresh token
-// pair. Public endpoint: it's the entry point for frontend users, so it must
-// NOT sit behind the x-api-key service middleware.
 authRouter.post(
   "/login",
   async (
@@ -31,18 +28,12 @@ authRouter.post(
     }
 
     try {
-      // Returns null for unknown email, wrong password, or inactive account.
       const result = await loginUser({ email, password });
 
       if (!result) {
         return res.status(401).json({ error: "Invalid email or password" });
       }
 
-      // Deliver the token pair as httpOnly cookies instead of exposing them
-      // in the JSON body: the browser stores them and the server reads them
-      // back from req.cookies on later requests. Attributes mirror the JWT
-      // expiries in utils/jwt/signToken.ts (access = 15 min, refresh = 30
-      // days); secure only over HTTPS (production).
       const secureCookies = envs.ENVIROMENT === "production";
 
       res.cookie("accessToken", result.accessToken, {
@@ -61,8 +52,6 @@ authRouter.post(
         maxAge: 60 * 60 * 24 * 30 * 1000, // 30 days, matching the refresh token TTL
       });
 
-      // Only the profile data goes in the body now; the tokens live in the
-      // cookies above.
       res.status(200).json({ user: result.user });
     } catch (error) {
       next(error);
@@ -97,8 +86,6 @@ authRouter.post(
     }
 
     try {
-      // Users must belong to an existing business, so fail early on an
-      // unknown businessId instead of creating an orphan account.
       const business = await getBusinessById(businessId);
 
       if (!business) {
@@ -107,8 +94,6 @@ authRouter.post(
           .json({ error: `No business found with id: ${businessId}` });
       }
 
-      // Hash the plaintext password (SALT_ROUNDS from envs) — the DB only
-      // ever stores the hash.
       const passwordHash = await hashPassword(password);
 
       const user = await createUser({
@@ -123,13 +108,10 @@ authRouter.post(
         return res.status(500).json({ error: "Failed to create the user" });
       }
 
-      // Keep the hash out of the response; created users can go log in.
       const { passwordHash: _removedHash, ...cleanUser } = user;
 
       res.status(201).json(cleanUser);
     } catch (error) {
-      // Duplicate email surfaces here (unique index) → 409 via the
-      // routeErrorHandler's duplicate-key handling.
       next(error);
     }
   },

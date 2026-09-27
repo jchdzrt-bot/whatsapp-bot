@@ -4,16 +4,16 @@ import {
   type Response,
   Router,
 } from "express";
-import addLocation from "../../db/methods/location/addLocation";
-import { type CreateLocationArgs } from "../../db/methods/location/createLocation";
-import addWorkerToLocation from "../../db/methods/location/addWorkerToLocation";
+import addLocation from "../../../db/methods/location/addLocation";
+import { type CreateLocationArgs } from "../../../db/methods/location/createLocation";
+import addWorkerToLocation from "../../../db/methods/location/addWorkerToLocation";
 import modifyLocation, {
   ModifyLocationArgs,
-} from "../../db/methods/location/modifyLocation";
+} from "../../../db/methods/location/modifyLocation";
 
-const locationRouter = Router();
+const adminLocationRouter = Router();
 
-locationRouter.post(
+adminLocationRouter.post(
   "",
   async (
     req: Request<{}, {}, CreateLocationArgs>,
@@ -44,7 +44,7 @@ locationRouter.post(
   },
 );
 
-locationRouter.patch(
+adminLocationRouter.patch(
   "/:locationId/workers",
   async (
     req: Request<{ locationId: string }, {}, { workerId: string }>,
@@ -74,7 +74,7 @@ locationRouter.patch(
   },
 );
 
-locationRouter.patch(
+adminLocationRouter.patch(
   "/:locationId",
   async (
     req: Request<
@@ -110,4 +110,4 @@ locationRouter.patch(
   },
 );
 
-export default locationRouter;
+export default adminLocationRouter;

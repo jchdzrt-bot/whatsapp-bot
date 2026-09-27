@@ -1,8 +1,5 @@
 import mongoose, { type Model, Schema } from "mongoose";
 
-// First iteration: every user of a business is an admin of it.
-// A business can have several user accounts so multiple people can log in
-// to the same business from the frontend. More roles can be added later.
 export enum USER_ROLE {
   ADMIN = "admin",
 }
