@@ -2,9 +2,21 @@ import Check from "@mui/icons-material/Check";
 import Close from "@mui/icons-material/Close";
 import Person from "@mui/icons-material/Person";
 import Whatsapp from "@mui/icons-material/Whatsapp";
-import { Box, Button, Dialog, IconButton, MenuItem, Select, TextField, Typography } from "@mui/material";
-import { useState } from "react";
-import { appointmentTimes, defaultAppointmentDate, services, shop, workers } from "../data";
+import {
+  Box,
+  Button,
+  Dialog,
+  IconButton,
+  MenuItem,
+  Select,
+  TextField,
+  Typography,
+} from "@mui/material";
+import { useEffect, useState } from "react";
+import type {
+  Business,
+  CreateAppointmentPayload,
+} from "../../../api/types";
 import { tokens } from "../../tokens";
 
 type AppointmentOrigin = "bot" | "manual";
@@ -12,31 +24,94 @@ type AppointmentOrigin = "bot" | "manual";
 interface NewAppointmentProps {
   open: boolean;
   onClose: () => void;
+  business: Business;
+  locationId: string;
+  /** Real workers of the selected location, e.g. [{ value, label }]. */
+  workers: { value: string; label: string }[];
+  /** Real service names from the business, e.g. ["Corte de cabello"]. */
+  services: string[];
+  /** Today in YYYY-MM-DD — the default date of the form. */
+  defaultDate: string;
+  onSave: (payload: CreateAppointmentPayload) => Promise<void>;
 }
 
 /**
- * "Nueva cita" modal, ported from
- * notes/design/add_appointment_modal.html into MUI components.
- * Pure UI — form state is local; no redux/backend calls yet.
+ * "Nueva cita" modal. Worker/service options come from the backend and the save
+ * action persists the appointment through the /appointment endpoint.
  */
-export default function NewAppointment({ open, onClose }: NewAppointmentProps) {
-  const [worker, setWorker] = useState<string>(workers[0]);
-  const [service, setService] = useState<string>(services[0]);
-  const [date, setDate] = useState<string>(defaultAppointmentDate);
-  const [time, setTime] = useState<string>(appointmentTimes[2]);
+export default function NewAppointment({
+  open,
+  onClose,
+  business,
+  locationId,
+  workers,
+  services,
+  defaultDate,
+  onSave,
+}: NewAppointmentProps) {
+  const [workerId, setWorkerId] = useState("");
+  const [service, setService] = useState("");
+  const [date, setDate] = useState(defaultDate);
+  const [time, setTime] = useState("");
   const [clientName, setClientName] = useState("");
   const [clientPhone, setClientPhone] = useState("");
   const [origin, setOrigin] = useState<AppointmentOrigin>("bot");
   const [showErrors, setShowErrors] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
+
+  // Keep the selects valid while the options load or change.
+  useEffect(() => {
+    setWorkerId((current) =>
+      workers.some((worker) => worker.value === current)
+        ? current
+        : (workers[0]?.value ?? ""),
+    );
+    setService((current) =>
+      services.includes(current) ? current : (services[0] ?? ""),
+    );
+  }, [workers, services]);
 
   const nameError = showErrors && clientName.trim() === "";
   const phoneError = showErrors && clientPhone.trim() === "";
+  const timeError = showErrors && time.trim() === "";
+  const missingOptions = workerId === "" || service === "";
 
-  const handleSave = () => {
+  const handleSave = async () => {
     setShowErrors(true);
-    if (clientName.trim() !== "" && clientPhone.trim() !== "") {
-      // Design-only: a valid save currently just closes the modal.
+    if (
+      clientName.trim() === "" ||
+      clientPhone.trim() === "" ||
+      time.trim() === "" ||
+      missingOptions
+    ) {
+      return;
+    }
+
+    setSaving(true);
+    setSaveError(null);
+    try {
+      await onSave({
+        businessId: business.id,
+        locationId,
+        workerId,
+        clientPhoneNumber: clientPhone.trim(),
+        clientName: clientName.trim(),
+        service,
+        date,
+        time,
+        status: "confirmed",
+        source: origin,
+      });
       onClose();
+      setShowErrors(false);
+      setClientName("");
+      setClientPhone("");
+      setTime("");
+    } catch {
+      setSaveError("No se pudo guardar la cita. Inténtalo de nuevo.");
+    } finally {
+      setSaving(false);
     }
   };
 
@@ -97,7 +172,7 @@ export default function NewAppointment({ open, onClose }: NewAppointmentProps) {
       </Box>
 
       <Typography sx={{ fontSize: 12, color: tokens.color.textMuted, mb: 2 }}>
-        {shop.name} · {shop.branch}
+        {business.name}
       </Typography>
 
       <Box sx={{ display: "flex", flexDirection: "column", gap: 1.5 }}>
@@ -107,12 +182,18 @@ export default function NewAppointment({ open, onClose }: NewAppointmentProps) {
           <Select
             fullWidth
             size="small"
-            value={worker}
-            onChange={(event) => setWorker(event.target.value as string)}
+            value={workerId}
+            onChange={(event) => setWorkerId(event.target.value)}
+            displayEmpty
           >
-            {workers.map((name) => (
-              <MenuItem key={name} value={name}>
-                {name}
+            {workers.length === 0 && (
+              <MenuItem value="" disabled>
+                Sin trabajadores disponibles
+              </MenuItem>
+            )}
+            {workers.map((worker) => (
+              <MenuItem key={worker.value} value={worker.value}>
+                {worker.label}
               </MenuItem>
             ))}
           </Select>
@@ -125,78 +206,55 @@ export default function NewAppointment({ open, onClose }: NewAppointmentProps) {
             fullWidth
             size="small"
             value={service}
-            onChange={(event) => setService(event.target.value as string)}
+            onChange={(event) => setService(event.target.value)}
+            displayEmpty
           >
-            {services.map((label) => (
-              <MenuItem key={label} value={label}>
-                {label}
+            {services.length === 0 && (
+              <MenuItem value="" disabled>
+                Sin servicios disponibles
+              </MenuItem>
+            )}
+            {services.map((option) => (
+              <MenuItem key={option} value={option}>
+                {option}
               </MenuItem>
             ))}
           </Select>
         </Box>
 
-        {/* Fecha + Hora */}
-        <Box
-          sx={{
-            display: "grid",
-            gridTemplateColumns: "repeat(2, minmax(0, 1fr))",
-            gap: 1.5,
-          }}
-        >
-          <Box>
-            <Typography sx={fieldLabelSx}>Fecha</Typography>
-            <TextField
-              fullWidth
-              size="small"
-              type="date"
-              value={date}
-              onChange={(event) => setDate(event.target.value)}
-            />
-          </Box>
-          <Box>
-            <Typography sx={fieldLabelSx}>Hora</Typography>
-            <Select
-              fullWidth
-              size="small"
-              value={time}
-              onChange={(event) => setTime(event.target.value as string)}
-            >
-              {appointmentTimes.map((label) => (
-                <MenuItem key={label} value={label}>
-                  {label}
-                </MenuItem>
-              ))}
-            </Select>
-          </Box>
+        {/* Fecha */}
+        <Box>
+          <Typography sx={fieldLabelSx}>Fecha</Typography>
+          <TextField
+            fullWidth
+            size="small"
+            type="date"
+            value={date}
+            onChange={(event) => setDate(event.target.value)}
+          />
         </Box>
 
-        {/* Availability notice */}
-        <Box
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            gap: 0.75,
-            px: 1.25,
-            py: 1,
-            bgcolor: tokens.color.successBg,
-            borderRadius: `${tokens.radius.inner}px`,
-          }}
-        >
-          <Check sx={{ fontSize: 14, color: tokens.color.successText }} />
-          <Typography sx={{ fontSize: 12, color: tokens.color.successText }}>
-            {worker} está disponible a esta hora
-          </Typography>
+        {/* Hora */}
+        <Box>
+          <Typography sx={fieldLabelSx}>Hora</Typography>
+          <TextField
+            fullWidth
+            size="small"
+            type="time"
+            value={time}
+            onChange={(event) => setTime(event.target.value)}
+            error={timeError}
+            helperText={timeError ? "Ingresa la hora de la cita" : undefined}
+          />
         </Box>
 
-        <Box sx={{ borderTop: `0.5px solid ${tokens.color.border}`, my: 0.5 }} />
-
-        {/* Cliente */}
+        {/* Nombre */}
         <Box>
           <Typography sx={fieldLabelSx}>Nombre del cliente</Typography>
           <TextField
             fullWidth
             size="small"
-            placeholder="Juan Pérez"
+            placeholder="Nombre y apellido"
             value={clientName}
             onChange={(event) => setClientName(event.target.value)}
             error={nameError}
@@ -204,6 +262,7 @@ export default function NewAppointment({ open, onClose }: NewAppointmentProps) {
           />
         </Box>
 
+        {/* Teléfono */}
         <Box>
           <Typography sx={fieldLabelSx}>Teléfono (WhatsApp)</Typography>
           <TextField
@@ -271,6 +330,17 @@ export default function NewAppointment({ open, onClose }: NewAppointmentProps) {
             </Button>
           </Box>
         </Box>
+
+        {missingOptions && showErrors && (
+          <Typography sx={{ fontSize: 12, color: tokens.color.dangerText }}>
+            Selecciona un trabajador y un servicio para la cita.
+          </Typography>
+        )}
+        {saveError && (
+          <Typography sx={{ fontSize: 12, color: tokens.color.dangerText }}>
+            {saveError}
+          </Typography>
+        )}
       </Box>
 
       {/* Acciones */}
@@ -291,6 +361,8 @@ export default function NewAppointment({ open, onClose }: NewAppointmentProps) {
         <Button
           variant="contained"
           onClick={handleSave}
+          disabled={saving || missingOptions}
+          startIcon={<Check sx={{ fontSize: 13 }} />}
           sx={{
             boxSizing: "border-box",
             flex: 1,
@@ -304,9 +376,13 @@ export default function NewAppointment({ open, onClose }: NewAppointmentProps) {
               bgcolor: tokens.color.fillSecondaryHover,
               boxShadow: "none",
             },
+            "&.Mui-disabled": {
+              color: tokens.color.textMuted,
+              bgcolor: tokens.color.surface3,
+            },
           }}
         >
-          Guardar cita
+          {saving ? "Guardando..." : "Guardar cita"}
         </Button>
       </Box>
     </Dialog>

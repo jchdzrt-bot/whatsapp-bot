@@ -9,7 +9,10 @@ import admingBusinessRouter from "./routes/mongo/admin/business";
 import adminLocationRouter from "./routes/mongo/admin/location";
 import adminWorkerRouter from "./routes/mongo/admin/worker";
 import appointmentRouter from "./routes/mongo/user/appointment";
+import businessRouter from "./routes/mongo/user/business";
 import conversationRouter from "./routes/mongo/user/conversation";
+import locationRouter from "./routes/mongo/user/location";
+import workerRouter from "./routes/mongo/user/worker";
 import flowsAppointmentRouter from "./routes/flows/appointment";
 import authLoginRouter from "./routes/auth";
 import authSessionRouter from "./routes/auth/session";
@@ -28,10 +31,16 @@ export default function createServer() {
   app.use("/admin/location", authenticatedService, adminLocationRouter);
   app.use("/admin/worker", authenticatedService, adminWorkerRouter);
 
-  // Routes to be used by the frontend
-  app.use("/appointment", authenticatedService, appointmentRouter);
-  app.use("/conversation", authenticatedService, conversationRouter);
+  // Routes to be used by the frontend. These are guarded by the browser
+  // session (accessToken cookie from /auth/login) rather than the service
+  // x-api-key, so the React dashboard can call them directly.
+  app.use("/appointment", authenticatedUser, appointmentRouter);
+  app.use("/conversation", authenticatedUser, conversationRouter);
+  app.use("/business", authenticatedUser, businessRouter);
+  app.use("/location", authenticatedUser, locationRouter);
+  app.use("/worker", authenticatedUser, workerRouter);
 
+  // Service-to-service flow used by the WhatsApp bot.
   app.use("/flows/appointment", authenticatedService, flowsAppointmentRouter);
 
   // Auth routes: /auth/login and /auth/signup are public (users authenticate

@@ -1,0 +1,20 @@
+{
+  "name": "admin-frontend",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Minimal TS + axios scripts to bootstrap the backend data the frontend needs: a business (with one location and two workers) and a user that can log into the frontend.",
+  "type": "module",
+  "scripts": {
+    "start": "tsx index.ts",
+    "create-user": "tsx createUser.ts/index.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "axios": "^1.20.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.8.3"
+  }
+}

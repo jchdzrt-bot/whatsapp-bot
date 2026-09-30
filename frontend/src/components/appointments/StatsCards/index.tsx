@@ -1,9 +1,17 @@
 import { Box, Paper, Typography } from "@mui/material";
-import { stats } from "../data";
 import { tokens } from "../../tokens";
 
+export interface StatCard {
+  label: string;
+  value: number;
+}
+
+interface StatsCardsProps {
+  stats: StatCard[];
+}
+
 /** Row of quick-stat cards: hoy / semana / por confirmar. */
-export default function StatsCards() {
+export default function StatsCards({ stats }: StatsCardsProps) {
   return (
     <Box
       sx={{

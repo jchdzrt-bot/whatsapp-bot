@@ -56,7 +56,9 @@ export default function ConversationList({ conversations, selectedId, onSelect }
         ))}
         {filtered.length === 0 && (
           <Box sx={{ p: 2, fontSize: 12, color: tokens.color.textMuted }}>
-            Sin conversaciones que coincidan
+            {conversations.length === 0
+              ? "Sin conversaciones"
+              : "Sin conversaciones que coincidan"}
           </Box>
         )}
       </Box>

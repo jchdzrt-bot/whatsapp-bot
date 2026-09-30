@@ -1,8 +1,8 @@
 /**
- * Mock data for the appointment dashboard.
+ * UI types and copy for the appointment dashboard.
  *
- * This is intentionally static — no redux and no backend calls yet. It will be
- * replaced with real API/selector data once the store wiring exists.
+ * All sample/mock content was removed — the dashboard is fed by the backend
+ * (appointment/location/worker/business endpoints).
  */
 
 export type AppointmentTint = "violet" | "aqua";
@@ -31,79 +31,8 @@ export interface TimeSlot {
   cells: Array<AppointmentInfo | null>;
 }
 
-export const shop = {
-  initials: "BA",
-  name: "Barbería Ana",
-  branch: "Sucursal Centro",
-} as const;
-
+/** Static filter button label (worker filter is wired by the dashboard). */
 export const workerFilterLabel = "Todos los trabajadores";
-
-/** Options for the "Nueva cita" modal (static placeholder data). */
-export const workers = ["Ana", "Luis"];
-
-export const services = ["Corte de cabello · 30 min", "Barba · 15 min"];
-
-export const appointmentTimes = ["9:00", "9:30", "10:00", "10:30"];
-
-export const defaultAppointmentDate = "2026-09-10";
-
-export const stats = [
-  { label: "Citas hoy", value: 7 },
-  { label: "Esta semana", value: 34 },
-  { label: "Por confirmar", value: 2 },
-] as const;
-
-export const weekRangeLabel = "8 - 14 de septiembre";
-
-export const days: DayHeader[] = [
-  { label: "Lun", date: 8, isToday: false },
-  { label: "Mar", date: 9, isToday: false },
-  { label: "Mié", date: 10, isToday: true },
-  { label: "Jue", date: 11, isToday: false },
-  { label: "Vie", date: 12, isToday: false },
-  { label: "Sáb", date: 13, isToday: false },
-  { label: "Dom", date: 14, isToday: false },
-];
-
-export const timeSlots: TimeSlot[] = [
-  {
-    time: "9:00",
-    cells: [
-      null,
-      { worker: "Ana", service: "Corte", tint: "violet" },
-      { worker: "Luis", service: "Barba", tint: "aqua" },
-      null,
-      { worker: "Ana", service: "Corte", tint: "violet" },
-      null,
-      null,
-    ],
-  },
-  {
-    time: "11:00",
-    cells: [
-      { worker: "Luis", service: "Corte", tint: "aqua" },
-      null,
-      null,
-      { worker: "Ana", service: "Barba", tint: "violet" },
-      null,
-      null,
-      null,
-    ],
-  },
-  {
-    time: "14:00",
-    cells: [
-      null,
-      null,
-      { worker: "Luis", service: "Corte", tint: "aqua" },
-      null,
-      null,
-      null,
-      null,
-    ],
-  },
-];
 
 export const calendarHint =
   "Click en una cita para editarla · Click en un espacio vacío para agregar una nueva";

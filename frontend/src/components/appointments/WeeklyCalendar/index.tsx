@@ -1,13 +1,18 @@
-import { Box, Paper } from "@mui/material";
+import { Box, Paper, Typography } from "@mui/material";
+import type { DayHeader, TimeSlot } from "../data";
 import AppointmentChip from "../AppointmentChip";
-import { days, timeSlots } from "../data";
 import { tokens } from "../../tokens";
 
 /** Time gutter width + 7 weekday columns (same for header and rows). */
 const GRID_TEMPLATE = "56px repeat(7, minmax(0, 1fr))";
 
+interface WeeklyCalendarProps {
+  days: DayHeader[];
+  timeSlots: TimeSlot[];
+}
+
 /** Weekly calendar grid: day header + one row per time slot. */
-export default function WeeklyCalendar() {
+export default function WeeklyCalendar({ days, timeSlots }: WeeklyCalendarProps) {
   return (
     <Paper
       elevation={0}
@@ -87,6 +92,27 @@ export default function WeeklyCalendar() {
           ))}
         </Box>
       ))}
+
+      {timeSlots.length === 0 && (
+        <Box
+          sx={{
+            display: "grid",
+            gridTemplateColumns: "1fr",
+            borderTop: `0.5px solid ${tokens.color.border}`,
+          }}
+        >
+          <Typography
+            sx={{
+              fontSize: 12,
+              color: tokens.color.textMuted,
+              textAlign: "center",
+              py: 3,
+            }}
+          >
+            No hay citas para esta semana
+          </Typography>
+        </Box>
+      )}
     </Paper>
   );
 }

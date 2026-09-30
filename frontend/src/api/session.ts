@@ -2,9 +2,7 @@ import type { AuthUser } from "../store/auth/authSlice";
 import { apiCall, type DataRestResponse } from "./apiCall";
 
 export type UserInformation = {
-  tenantId: string;
-  locationIds: string[];
-  roles: string[];
+  businessId: string;
 };
 
 type SessionProfile = {

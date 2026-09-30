@@ -1,13 +1,22 @@
 import ChevronLeft from "@mui/icons-material/ChevronLeft";
 import ChevronRight from "@mui/icons-material/ChevronRight";
 import { Box, Button, IconButton, Typography } from "@mui/material";
-import { weekRangeLabel } from "../data";
 import { tokens } from "../../tokens";
 
 const VIEWS = ["Semana", "Día"] as const;
 
+interface WeekNavigatorProps {
+  rangeLabel: string;
+  onPrevious: () => void;
+  onNext: () => void;
+}
+
 /** Week prev/next navigation, displayed range and Semana/Día view toggle. */
-export default function WeekNavigator() {
+export default function WeekNavigator({
+  rangeLabel,
+  onPrevious,
+  onNext,
+}: WeekNavigatorProps) {
   return (
     <Box
       sx={{
@@ -23,6 +32,7 @@ export default function WeekNavigator() {
         <IconButton
           aria-label="Semana anterior"
           size="small"
+          onClick={onPrevious}
           sx={{
             boxSizing: "border-box",
             width: 28,
@@ -32,10 +42,11 @@ export default function WeekNavigator() {
         >
           <ChevronLeft sx={{ fontSize: 14 }} />
         </IconButton>
-        <Typography sx={{ fontSize: 14, fontWeight: 500 }}>{weekRangeLabel}</Typography>
+        <Typography sx={{ fontSize: 14, fontWeight: 500 }}>{rangeLabel}</Typography>
         <IconButton
           aria-label="Semana siguiente"
           size="small"
+          onClick={onNext}
           sx={{
             boxSizing: "border-box",
             width: 28,

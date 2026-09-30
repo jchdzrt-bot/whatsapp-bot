@@ -1,16 +1,38 @@
-import { Box } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import type { Conversation } from "../data";
 import ConversationHeader from "../ConversationHeader";
 import MessageComposer from "../MessageComposer";
 import MessageThread from "../MessageThread";
+import { tokens } from "../../tokens";
 
 interface ConversationPaneProps {
-  conversation: Conversation;
+  conversation: Conversation | null;
   onSendMessage: (text: string) => void;
 }
 
 /** Right column of the conversations page: header, message thread and composer. */
-export default function ConversationPane({ conversation, onSendMessage }: ConversationPaneProps) {
+export default function ConversationPane({
+  conversation,
+  onSendMessage,
+}: ConversationPaneProps) {
+  if (!conversation) {
+    return (
+      <Box
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          minWidth: 0,
+          bgcolor: tokens.color.surface2,
+        }}
+      >
+        <Typography sx={{ fontSize: 13, color: tokens.color.textMuted }}>
+          Selecciona una conversación para ver los mensajes
+        </Typography>
+      </Box>
+    );
+  }
+
   return (
     <Box sx={{ display: "flex", flexDirection: "column", minWidth: 0 }}>
       <ConversationHeader conversation={conversation} />
