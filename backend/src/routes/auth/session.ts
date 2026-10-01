@@ -31,7 +31,7 @@ authSessionRouter.get(
   "/user-information",
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const { businessId, role } = (req as AuthenticatedUserRequest).user;
+      const { businessId } = (req as AuthenticatedUserRequest).user;
 
       return res
         .status(200)

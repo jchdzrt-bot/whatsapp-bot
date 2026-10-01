@@ -147,6 +147,12 @@ conversationRouter.patch(
         ...filterOutUndefinedProperties({ stage, handledBy, data }),
       });
 
+      if (!conversation) {
+        return res
+          .status(404)
+          .json({ error: `No conversation found with id: ${conversationId}` });
+      }
+
       res.status(200).json({ conversation });
     } catch (error) {
       next(error);

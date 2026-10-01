@@ -1,7 +1,7 @@
 export default function confirmEnvs() {
   const requiredEnvs = {
     PORT: process.env.PORT,
-    ENVIROMENT: process.env.ENVIROMENT,
+    ENVIRONMENT: process.env.ENVIRONMENT,
     MONGO_USER: encodeURIComponent(process.env.MONGO_USER ?? ""),
     MONGO_PASSWORD: encodeURIComponent(process.env.MONGO_PASSWORD ?? ""),
     MONGO_HOST: process.env.MONGO_HOST,
@@ -14,21 +14,21 @@ export default function confirmEnvs() {
     SALT_ROUNDS: process.env.SALT_ROUNDS,
   };
 
-  const missingEnvs = [];
+  const missingEnvs: Array<[string, string | undefined]> = [];
 
   for (const [key, value] of Object.entries(requiredEnvs)) {
     if (value === undefined || value.length === 0) {
-      const missingEnv = [key, value];
-      missingEnvs.push(missingEnv);
+      missingEnvs.push([key, value]);
     }
   }
 
   if (missingEnvs.length > 0) {
-    console.error("Missing environment variables:");
-    
-    for (const [key, value] of missingEnvs) {
-      console.error(`- ${key} = ${value}`);
-    }
+    const missingEnvList = missingEnvs.map(([key]) => `- ${key}`).join("\n");
+
+    // Fail fast instead of booting a broken server (e.g. jsonwebtoken signing
+    // with an empty secret, or a malformed Mongo connection string) that would
+    // only surface cryptic errors on the first request.
+    throw new Error(`Missing environment variables:\n${missingEnvList}`);
   }
 
   return { ...requiredEnvs };

@@ -34,7 +34,7 @@ authRouter.post(
         return res.status(401).json({ error: "Invalid email or password" });
       }
 
-      const secureCookies = envs.ENVIROMENT === "production";
+      const secureCookies = envs.ENVIRONMENT === "production";
 
       res.cookie("accessToken", result.accessToken, {
         httpOnly: true,

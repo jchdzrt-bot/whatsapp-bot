@@ -34,9 +34,9 @@ admingBusinessRouter.post(
   ) => {
     const { name, type, phoneNumberId, businessPhone, service } = req.body;
 
-    if (!name || !type || !phoneNumberId) {
+    if (!name || !type || !phoneNumberId || !businessPhone) {
       return res.status(400).json({
-        error: "name, type, and phoneNumberId are all required",
+        error: "name, type, phoneNumberId, and businessPhone are all required",
       });
     }
 

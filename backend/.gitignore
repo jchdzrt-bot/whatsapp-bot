@@ -1,0 +1,25 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+
+# Logs
+*.log
+logs/
+
+# Environment files (never commit secrets)
+.env
+.env.*
+!.env.example
+!.env.production.example
+
+# OS / editor
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+.idea/
+.vscode/*
+!.vscode/extensions.json

@@ -2,17 +2,15 @@ import simpleErrorHandling from "../../../utils/error/simpleErrorHandling";
 import filterOutUndefinedProperties from "../../../utils/object/filterOutUndefinedProperties";
 import { Worker, WorkerMongoType } from "../../schemas/workerSchema";
 
-type ModifyWorkerArgs = {
-  locationId: string;
-} & Loosen<{
+type ModifyWorkerArgs = Loosen<{
   firstName?: string;
   lastName?: string;
   services?: string[];
   workingHours?: WeeklyHours;
-}>;
+}> & { workerId: string };
 
 export default async function modifyWorker({
-  locationId,
+  workerId,
   firstName,
   lastName,
   services,
@@ -31,13 +29,13 @@ export default async function modifyWorker({
 
   try {
     const worker = await Worker.findOneAndUpdate(
-      { id: locationId },
+      { id: workerId },
       { $set: updateFields },
       { new: true, select: "-_id -__v", timestamps: true },
     );
 
     if (!worker) {
-      console.error(`No worker found with id: ${locationId}`);
+      console.error(`No worker found with id: ${workerId}`);
       return null;
     }
 

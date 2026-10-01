@@ -86,7 +86,7 @@ appointmentRouter.post(
     }
 
     try {
-      const conversation = await createAppointment({
+      const appointment = await createAppointment({
         businessId,
         locationId,
         workerId,
@@ -99,7 +99,7 @@ appointmentRouter.post(
         source,
       });
 
-      res.status(201).json(conversation);
+      res.status(201).json(appointment);
     } catch (error) {
       next(error);
     }
@@ -124,6 +124,12 @@ appointmentRouter.patch(
         appointmentId,
         ...filterOutUndefinedProperties(req.body),
       });
+
+      if (!appointment) {
+        return res
+          .status(404)
+          .json({ error: `No appointment found with id: ${appointmentId}` });
+      }
 
       res.status(200).json({ appointment });
     } catch (error) {
