@@ -1,7 +1,7 @@
 import Check from "@mui/icons-material/Check";
 import Close from "@mui/icons-material/Close";
 import Person from "@mui/icons-material/Person";
-import Whatsapp from "@mui/icons-material/Whatsapp";
+import WhatsApp from "@mui/icons-material/WhatsApp";
 import {
   Box,
   Button,
@@ -282,7 +282,7 @@ export default function NewAppointment({
           <Box sx={{ display: "flex", gap: 0.75 }}>
             <Button
               size="small"
-              startIcon={<Whatsapp sx={{ fontSize: 14 }} />}
+              startIcon={<WhatsApp sx={{ fontSize: 14 }} />}
               onClick={() => setOrigin("bot")}
               sx={{
                 boxSizing: "border-box",
