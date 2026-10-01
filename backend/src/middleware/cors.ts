@@ -6,18 +6,19 @@ import type { NextFunction, Request, Response } from "express";
 // frontend URL). See backend/.env.production.example and render.yaml.
 const DEV_ALLOWED_ORIGINS = ["http://localhost:5173", "http://127.0.0.1:5173"];
 
-const ALLOWED_ORIGINS = new Set([
-  ...DEV_ALLOWED_ORIGINS,
-  ...(process.env.ALLOWED_CORS_ORIGINS ?? "")
-    .split(",")
-    .map((origin) => origin.trim())
-    .filter(Boolean),
-]);
+// Normalize a browser Origin so minor formatting differences (trailing slash,
+// whitespace, casing) can't silently break the CORS allow-list. Browsers send
+// e.g. "https://frontend.onrender.com" (no trailing slash, lowercase host).
+function normalizeOrigin(origin: string): string {
+  return origin.trim().replace(/\/+$/, "").toLowerCase();
+}
 
+// Read at request time (not module-load time) so the value is always the
+// process's current env; Render still needs a redeploy/restart after a change.
 export default function cors(req: Request, res: Response, next: NextFunction) {
   const origin = req.headers.origin;
 
-  if (origin && ALLOWED_ORIGINS.has(origin)) {
+  if (origin && isOriginAllowed(origin)) {
     res.set("Access-Control-Allow-Origin", origin);
     res.set("Vary", "Origin");
   }
@@ -40,4 +41,17 @@ export default function cors(req: Request, res: Response, next: NextFunction) {
   }
 
   next();
+}
+
+function isOriginAllowed(origin: string): boolean {
+  const configured: string[] = (process.env.ALLOWED_CORS_ORIGINS ?? "")
+    .split(",")
+    .map((item) => item.trim())
+    .filter(Boolean);
+
+  const allowed = new Set(
+    [...DEV_ALLOWED_ORIGINS, ...configured].map(normalizeOrigin),
+  );
+
+  return allowed.has(normalizeOrigin(origin));
 }
