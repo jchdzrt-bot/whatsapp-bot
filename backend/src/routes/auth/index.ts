@@ -41,11 +41,23 @@ authRouter.post(
         `[auth] POST /auth/login OK for email: ${email} (userId: ${result.user.id}, businessId: ${result.user.businessId})`,
       );
 
+      // Cookie delivery mode. The frontend page and the API usually live on
+      // different origins (e.g. the local dev server or a custom domain → this
+      // backend on Render). Browsers do NOT attach SameSite=Lax cookies to
+      // cross-site XHR/fetch calls, so the very next /auth/session/* request
+      // would come back with a 401 "Not authenticated". Production therefore
+      // uses SameSite=None (+ Secure, which browsers require alongside None);
+      // local http dev keeps Secure off and SameSite=Lax.
       const secureCookies = envs.ENVIRONMENT === "production";
+      const sameSite = secureCookies ? "none" : "lax";
+
+      console.log(
+        `[auth] login cookies: secure=${secureCookies}, sameSite=${sameSite}`,
+      );
 
       res.cookie("accessToken", result.accessToken, {
         httpOnly: true,
-        sameSite: "lax",
+        sameSite,
         secure: secureCookies,
         path: "/",
         maxAge: 60 * 15 * 1000, // 15 minutes, matching the access token TTL
@@ -53,7 +65,7 @@ authRouter.post(
 
       res.cookie("refreshToken", result.refreshToken, {
         httpOnly: true,
-        sameSite: "lax",
+        sameSite,
         secure: secureCookies,
         path: "/",
         maxAge: 60 * 60 * 24 * 30 * 1000, // 30 days, matching the refresh token TTL

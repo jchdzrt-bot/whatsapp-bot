@@ -26,7 +26,7 @@ services:
     startCommand: npm start
     envVars:
       - key: ENVIRONMENT
-        value: development
+        value: production
       # Mongo DB connection (whatsapp-bot backend/src/index.ts builds the
       # connection string from these non-local values).
       - key: MONGO_USER
@@ -47,8 +47,12 @@ services:
         value: "10"
       # Comma-separated browser origins allowed to call the API, e.g.
       # https://<your-frontend>.onrender.com (backend/src/middleware/cors.ts).
+      # The CORS middleware also always allows the Vite dev-server origins
+      # (http://localhost:5173, http://127.0.0.1:5173).
+      # Note: unless a value was already set in the Dashboard (sync: false in
+      # earlier versions), the blueprint syncs this value to the service.
       - key: ALLOWED_CORS_ORIGINS
-        sync: false
+        value: https://frontend-eyo6.onrender.com
       # PORT is injected automatically by Render (backend/src/index.ts).
 
   # --------------------------------------------------------------- frontend -#

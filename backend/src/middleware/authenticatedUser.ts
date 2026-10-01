@@ -19,12 +19,18 @@ export default function authenticatedUser(
   const token = req.cookies?.accessToken as string | undefined;
 
   if (!token) {
+    console.log(
+      `[auth] authenticatedUser: no accessToken cookie on ${req.method} ${req.path} (any cookies sent: ${Boolean(req.headers.cookie)})`,
+    );
     return res.status(401).json({ error: "Not authenticated" });
   }
 
   const user = verifyAccessToken(token);
 
   if (!user) {
+    console.log(
+      `[auth] authenticatedUser: invalid or expired accessToken on ${req.method} ${req.path}`,
+    );
     return res.status(401).json({ error: "Invalid or expired session" });
   }
 
