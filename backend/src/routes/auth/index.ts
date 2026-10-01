@@ -27,12 +27,19 @@ authRouter.post(
       });
     }
 
+    console.log(`[auth] POST /auth/login attempt for email: ${email}`);
+
     try {
       const result = await loginUser({ email, password });
 
       if (!result) {
+        console.log(`[auth] POST /auth/login FAILED for email: ${email}`);
         return res.status(401).json({ error: "Invalid email or password" });
       }
+
+      console.log(
+        `[auth] POST /auth/login OK for email: ${email} (userId: ${result.user.id}, businessId: ${result.user.businessId})`,
+      );
 
       const secureCookies = envs.ENVIRONMENT === "production";
 

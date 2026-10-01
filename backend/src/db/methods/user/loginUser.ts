@@ -26,6 +26,8 @@ export default async function loginUser({
 }: LoginUserArgs): Promise<LoginUserResult | NullOrUndefined> {
   const normalizedEmail = email.trim().toLowerCase();
 
+  console.log(`[auth] login attempt for email: ${normalizedEmail}`);
+
   try {
     // passwordHash is excluded by default (select: false), so pull it in
     // explicitly just for the credential check.
@@ -34,10 +36,20 @@ export default async function loginUser({
     );
 
     // Same null response for unknown email, wrong password, or inactive
-    // account, so callers can't tell which one failed.
-    if (!user) return null;
-    if (!(await verifyPassword(password, user.passwordHash))) return null;
-    if (!user.isActive) return null;
+    // account, so callers can't tell which one failed. The reason is still
+    // logged server-side to ease debugging.
+    if (!user) {
+      console.log(`[auth] no user found for email: ${normalizedEmail}`);
+      return null;
+    }
+    if (!(await verifyPassword(password, user.passwordHash))) {
+      console.log(`[auth] invalid password for email: ${normalizedEmail}`);
+      return null;
+    }
+    if (!user.isActive) {
+      console.log(`[auth] inactive account for email: ${normalizedEmail}`);
+      return null;
+    }
 
     const updatedUser = await User.findOneAndUpdate(
       { id: user.id },
@@ -54,6 +66,10 @@ export default async function loginUser({
     // "type" claim keeps each token scoped to its purpose (see
     // utils/jwt/signToken.ts).
     const { id, businessId, role } = cleanUser;
+
+    console.log(
+      `[auth] login successful for email: ${normalizedEmail} (userId: ${id})`,
+    );
 
     return {
       accessToken: signAccessToken({ id, businessId, role }),

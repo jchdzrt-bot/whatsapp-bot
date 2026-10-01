@@ -1,18 +1,16 @@
 import axios from "axios";
 import setupBusiness from "./setupBusiness/index.js";
-import createUser from "./createUser.ts/index.js";
 
-// Bootstraps the data needed by the frontend: the business (with its location
-// and workers) and a user that can log into the frontend, linked to the
-// business.
+// Bootstraps the data needed by the frontend: the business with its location
+// and workers. The admin user that can log into the frontend is created
+// separately with `npm run create-user` (see createUser.ts).
 async function main() {
   await setupBusiness();
-  await createUser();
 }
 
 main().catch((error: unknown) => {
   console.error("\n❌ Setup failed:");
-
+  console.log(error);
   if (axios.isAxiosError(error)) {
     const { method, url } = error.config ?? {};
     console.error(

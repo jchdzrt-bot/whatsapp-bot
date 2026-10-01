@@ -18,7 +18,7 @@ export const BUSINESS_TYPE = "barber";
 // `phoneNumberId` is a REQUIRED field of POST /admin/business (it's the Meta
 // WhatsApp Business API phone number id). Replace this placeholder with the
 // real one, otherwise the API rejects the request.
-export const BUSINESS_PHONE_NUMBER_ID = "REPLACE_WITH_WHATSAPP_PHONE_NUMBER_ID";
+export const BUSINESS_PHONE_NUMBER_ID = "phoneId-1";
 
 // --- Location -----------------------------------------------------------------
 export const LOCATION_NAME = "location-1";

@@ -5,8 +5,8 @@
   "description": "Minimal TS + axios scripts to bootstrap the backend data the frontend needs: a business (with one location and two workers) and a user that can log into the frontend.",
   "type": "module",
   "scripts": {
-    "start": "tsx index.ts",
-    "create-user": "tsx createUser.ts/index.ts",
+    "start": "tsx --env-file=.env index.ts",
+    "create-user": "tsx --env-file=.env createUser.ts/index.ts",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {

@@ -16,5 +16,5 @@ export const USER_PASSWORD = "password123";
 // BUSINESS_ID explicitly, or leave it empty and set BUSINESS_NAME — the script
 // will then look up the id through GET /admin/business/all (by default matching
 // the business created by setupBusiness/constants.ts).
-export const BUSINESS_ID = "06397bab-7514-44df-a443-efec952b17a7";
+export const BUSINESS_ID = "e8e99575-a897-46d3-b80c-1b62a8183603";
 export const BUSINESS_NAME = "barber-test";
