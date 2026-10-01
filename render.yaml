@@ -1,0 +1,78 @@
+# Render Blueprint for whatsapp-bot.
+#
+# Deploys the app as two services:
+#   1. backend  – Express + MongoDB API (Node web service)
+#   2. frontend – Vite + React dashboard (static site)
+#
+# Deploy in the Render Dashboard: New -> Blueprint (point at this repo).
+# You can also validate/sync with the Render CLI: `render blueprint deploy`.
+#
+# Secrets and machine-specific values are marked `sync: false`; the Render
+# Dashboard prompts for them on first sync and never commits them.
+
+# Resource names (keep wiring references in sync):
+# - backend  -> type: web, runtime: node
+# - frontend -> type: web, runtime: static
+
+services:
+  # ---------------------------------------------------------------- backend -#
+  - type: web
+    name: backend
+    runtime: node
+    rootDir: backend
+    plan: free
+    branch: main
+    buildCommand: npm ci && npm run build
+    startCommand: npm start
+    envVars:
+      - key: ENVIRONMENT
+        value: production
+      # Mongo DB connection (whatsapp-bot backend/src/index.ts builds the
+      # connection string from these non-local values).
+      - key: MONGO_USER
+        sync: false
+      - key: MONGO_PASSWORD
+        sync: false
+      - key: MONGO_HOST
+        sync: false
+      - key: MONGO_PORT
+        value: "27017"
+      - key: MONGO_DB
+        value: whatsapp-bot
+      # Service-to-service middleware header (backend/src/middleware/authenticatedService.ts).
+      - key: X_API_KEY
+        sync: false
+      # Auth
+      - key: JWT_SECRET
+        generateValue: true
+      - key: SALT_ROUNDS
+        value: "10"
+      # Comma-separated browser origins allowed to call the API, e.g.
+      # https://<your-frontend>.onrender.com (backend/src/middleware/cors.ts).
+      - key: ALLOWED_CORS_ORIGINS
+        sync: false
+      # PORT is injected automatically by Render (backend/src/index.ts).
+
+  # --------------------------------------------------------------- frontend -#
+  - type: web
+    name: frontend
+    runtime: static
+    rootDir: frontend
+    branch: main
+    buildCommand: npm ci && npm run build
+    staticPublishPath: ./dist
+    # SPA routing: serve index.html for every path so deep links and refreshes
+    # work (react-router handles routing client-side).
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+    envVars:
+      # Build-time backend URL baked into the bundle
+      # (frontend/src/api/apiCall.ts). Copies the backend service's public URL
+      # (RENDER_EXTERNAL_URL) into BACKEND_URL when the blueprint syncs.
+      - key: BACKEND_URL
+        fromService:
+          name: backend
+          type: web
+          envVarKey: RENDER_EXTERNAL_URL

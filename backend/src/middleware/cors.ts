@@ -1,10 +1,17 @@
 import type { NextFunction, Request, Response } from "express";
 
-// Browser origins allowed to call the API directly during development
-// (the Vite dev server). Tighten this list for production.
+// Browser origins allowed to call the API directly. The Vite dev-server
+// origins stay enabled for local development; production origins are appended
+// from the ALLOWED_CORS_ORIGINS env var (comma-separated, e.g. the Render
+// frontend URL). See backend/.env.production.example and render.yaml.
+const DEV_ALLOWED_ORIGINS = ["http://localhost:5173", "http://127.0.0.1:5173"];
+
 const ALLOWED_ORIGINS = new Set([
-  "http://localhost:5173",
-  "http://127.0.0.1:5173",
+  ...DEV_ALLOWED_ORIGINS,
+  ...(process.env.ALLOWED_CORS_ORIGINS ?? "")
+    .split(",")
+    .map((origin) => origin.trim())
+    .filter(Boolean),
 ]);
 
 export default function cors(req: Request, res: Response, next: NextFunction) {

@@ -1,4 +1,4 @@
-import express from "express";
+import express, { type Request, type Response } from "express";
 import http from "http";
 import cookieParser from "cookie-parser";
 import routeErrorHandler from "./middleware/routeErrorHandler";
@@ -25,6 +25,12 @@ export default function createServer() {
   app.use(cors);
 
   const server = http.createServer(app);
+
+  // Public health check for Render (`healthCheckPath` in render.yaml) and load
+  // balancers. Must stay reachable without any auth middleware.
+  app.get("/health", (_req: Request, res: Response) => {
+    res.json({ status: "ok" });
+  });
 
   // Routes to be used by the Admin of the app
   app.use("/admin/business", authenticatedService, admingBusinessRouter);
