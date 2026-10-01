@@ -26,7 +26,7 @@ services:
     startCommand: npm start
     envVars:
       - key: ENVIRONMENT
-        value: production
+        value: development
       # Mongo DB connection (whatsapp-bot backend/src/index.ts builds the
       # connection string from these non-local values).
       - key: MONGO_USER
@@ -35,10 +35,8 @@ services:
         sync: false
       - key: MONGO_HOST
         sync: false
-      - key: MONGO_PORT
-        value: "27017"
       - key: MONGO_DB
-        value: whatsapp-bot
+        sync: false
       # Service-to-service middleware header (backend/src/middleware/authenticatedService.ts).
       - key: X_API_KEY
         sync: false

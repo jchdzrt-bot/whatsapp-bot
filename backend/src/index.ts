@@ -8,7 +8,7 @@ export const envs = confirmEnvs();
 export const MONGODB_CONNECTION_STRING =
   envs.ENVIRONMENT === "local"
     ? `mongodb://127.0.0.1:27017/${envs.MONGO_DB}`
-    : `mongodb://${envs.MONGO_USER}:${envs.MONGO_PASSWORD}@${envs.MONGO_HOST}:${envs.MONGO_PORT}/${envs.MONGO_DB}?authSource=admin`;
+    : `mongodb+srv://${envs.MONGO_USER}:${envs.MONGO_PASSWORD}@${envs.MONGO_HOST}/?appName=${envs.MONGO_DB}`;
 
 server.listen(envs.PORT, async () => {
   console.log(`Server listening on port ${envs.PORT}`);
