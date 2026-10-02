@@ -2,6 +2,7 @@ import axios from "axios";
 import { redirect } from "react-router";
 import { getUserInformation, getUserProfile } from "../../api/session";
 import { authLoggedOut } from "../../store/auth/authSlice";
+import { workspaceReset } from "../../store/workspace/workspaceSlice";
 import { store } from "../../store";
 
 export default async function homeLoader() {
@@ -19,6 +20,9 @@ export default async function homeLoader() {
       // redirecting, otherwise the Login page would bounce straight back to
       // "/" and the two would redirect in an endless loop.
       store.dispatch(authLoggedOut());
+      // Drop the previous user's business/locations from the shared workspace
+      // so a fresh login never shows stale branches.
+      store.dispatch(workspaceReset());
 
       throw redirect("/login");
     }

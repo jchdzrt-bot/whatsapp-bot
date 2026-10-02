@@ -2,18 +2,16 @@ import { Box, CircularProgress, Paper, Typography } from "@mui/material";
 import { useEffect, useMemo, useState } from "react";
 import { calendarHint } from "../data";
 import type { AppointmentInfo, DayHeader, TimeSlot } from "../data";
+import AppointmentsToolbar from "../AppointmentsToolbar";
 import NewAppointment from "../NewAppointment";
-import ShopHeader from "../ShopHeader";
 import StatsCards from "../StatsCards";
 import WeekNavigator from "../WeekNavigator";
 import WeeklyCalendar from "../WeeklyCalendar";
 import { createAppointment, getAppointments } from "../../../api/appointments";
-import { getBusiness, getLocations, getWorkers } from "../../../api/business";
+import { getWorkers } from "../../../api/business";
 import type {
   Appointment,
-  Business,
   CreateAppointmentPayload,
-  Location,
   Worker,
 } from "../../../api/types";
 import { useAppSelector } from "../../../store/hooks";
@@ -50,13 +48,14 @@ function tintForWorker(workerId: string): AppointmentInfo["tint"] {
  * computed from real backend data (business/locations/workers/appointments).
  */
 export default function AppointmentDashboard() {
-  const businessId = useAppSelector((state) => state.auth.user?.businessId);
+  const business = useAppSelector((state) => state.workspace.business);
+  const selectedLocationId = useAppSelector(
+    (state) => state.workspace.selectedLocationId,
+  );
+  const workspaceError = useAppSelector((state) => state.workspace.error);
 
   const [newAppointmentOpen, setNewAppointmentOpen] = useState(false);
 
-  const [business, setBusiness] = useState<Business | null>(null);
-  const [locations, setLocations] = useState<Location[]>([]);
-  const [selectedLocationId, setSelectedLocationId] = useState("");
   const [workers, setWorkers] = useState<Worker[]>([]);
   const [appointments, setAppointments] = useState<Appointment[]>([]);
 
@@ -65,39 +64,12 @@ export default function AppointmentDashboard() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Load the signed-in user's business and its locations.
-  useEffect(() => {
-    if (!businessId) return;
-    let cancelled = false;
-    setLoading(true);
-    setError(null);
-
-    Promise.all([getBusiness(businessId), getLocations(businessId)])
-      .then(([businessData, locationData]) => {
-        if (cancelled) return;
-        // Trust the array contract from getLocations, but keep a second guard so
-        // a non-array payload can never reach locations.length / locations.map.
-        const locationList = Array.isArray(locationData) ? locationData : [];
-        setBusiness(businessData);
-        setLocations(locationList);
-        setSelectedLocationId((current) => current || (locationList[0]?.id ?? ""));
-      })
-      .catch(() => {
-        if (!cancelled) setError("No se pudieron cargar los datos del negocio.");
-      })
-      .finally(() => {
-        if (!cancelled) setLoading(false);
-      });
-
-    return () => {
-      cancelled = true;
-    };
-  }, [businessId]);
-
   // Load workers and appointments whenever the selected location changes.
+  // Business + locations are loaded once by the Home shell (workspace store).
   useEffect(() => {
     if (!selectedLocationId) return;
     let cancelled = false;
+    setLoading(true);
     setError(null);
 
     Promise.all([
@@ -112,15 +84,15 @@ export default function AppointmentDashboard() {
       })
       .catch(() => {
         if (!cancelled) setError("No se pudieron cargar las citas.");
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
       });
 
     return () => {
       cancelled = true;
     };
   }, [selectedLocationId]);
-
-  const selectedLocation =
-    locations.find((location) => location.id === selectedLocationId) ?? null;
 
   const week = useMemo(() => weekDates(weekAnchor), [weekAnchor]);
 
@@ -225,18 +197,24 @@ export default function AppointmentDashboard() {
         Panel de citas: calendario semanal con citas y botón para agregar nuevas
       </Box>
 
-      {loading ? (
+      {workspaceError ? (
+        <Typography
+          sx={{
+            fontSize: 12,
+            color: tokens.color.dangerText,
+            mt: 2,
+            textAlign: "center",
+          }}
+        >
+          {workspaceError}
+        </Typography>
+      ) : loading ? (
         <Box sx={{ display: "flex", justifyContent: "center", py: 8 }}>
           <CircularProgress size={32} />
         </Box>
       ) : (
         <>
-          <ShopHeader
-            business={business}
-            locations={locations}
-            selectedLocationId={selectedLocationId}
-            locationLabel={selectedLocation?.name ?? null}
-            onLocationChange={setSelectedLocationId}
+          <AppointmentsToolbar
             onNewAppointment={() => setNewAppointmentOpen(true)}
           />
 
