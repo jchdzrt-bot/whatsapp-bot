@@ -26,6 +26,8 @@ export type Business = {
   type: string;
   businessPhone: string;
   phoneNumberId: string;
+  /** Maps a service name to its duration, e.g. { "Corte de cabello": "30 min" }. */
+  service: Record<string, string>;
   locationIds: string[];
   flow: string;
 };

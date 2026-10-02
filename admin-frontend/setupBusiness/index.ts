@@ -4,6 +4,7 @@ import {
   BUSINESS_NAME,
   BUSINESS_PHONE,
   BUSINESS_PHONE_NUMBER_ID,
+  BUSINESS_SERVICES,
   BUSINESS_TYPE,
   LOCATION_ADDRESS,
   LOCATION_NAME,
@@ -23,6 +24,7 @@ export default async function setupBusiness() {
     type: BUSINESS_TYPE,
     phoneNumberId: BUSINESS_PHONE_NUMBER_ID,
     businessPhone: BUSINESS_PHONE,
+    service: BUSINESS_SERVICES,
   });
   console.log(`✅ Business created:  ${business.name} (${business.id})`);
 

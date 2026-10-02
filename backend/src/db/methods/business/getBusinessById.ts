@@ -15,7 +15,12 @@ export default async function getBusinessById(
       return null;
     }
 
-    return business.toObject();
+    const cleanBusiness = business.toObject();
+
+    // Legacy documents created before the `service` map existed (or stored with
+    // it as null) don't get the schema default back on hydration. Keep the API
+    // contract stable: `service` is always an object.
+    return { ...cleanBusiness, service: cleanBusiness.service ?? {} };
   } catch (error) {
     simpleErrorHandling(
       `Error fetching business by id: ${businessId}`,

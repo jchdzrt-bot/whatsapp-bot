@@ -275,7 +275,7 @@ export default function AppointmentDashboard() {
                 value: worker.id,
                 label: `${worker.firstName} ${worker.lastName}`.trim(),
               }))}
-              services={Object.keys(business.service)}
+              services={Object.keys(business.service ?? {})}
               defaultDate={todayISO}
               onSave={handleSaveAppointment}
             />

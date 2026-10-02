@@ -19,7 +19,7 @@ export default async function createBusiness({
   type,
   businessPhone,
   phoneNumberId,
-  service,
+  service = {},
   flow = FLOWS.APPOINTMENT_V1,
 }: CreateBusinessArgs): Promise<BusinessMongoType | undefined> {
   const newBusiness = new Business({

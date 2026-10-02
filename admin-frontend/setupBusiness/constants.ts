@@ -33,6 +33,16 @@ export const WORKERS = [
   { firstName: "Pedro", lastName: "Gomez" },
 ];
 
+// --- Services ----------------------------------------------------------------
+// The service catalog the business offers (name → duration), sent in the
+// POST /admin/business body. The frontend dashboard lists these in the "Nueva
+// cita" modal via `business.service`.
+export const BUSINESS_SERVICES: Record<string, string> = {
+  "Corte de cabello": "30 min",
+  Barba: "15 min",
+  "Corte + Barba": "45 min",
+};
+
 // --- Schedule -----------------------------------------------------------------
 // `openHours` (location) and `workingHours` (worker) use the WeeklyHours shape:
 //   { <weekday>: [{ start: "HH:mm", end: "HH:mm" }] }

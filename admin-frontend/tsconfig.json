@@ -18,6 +18,7 @@
     "setupBusiness/constants.ts",
     "types.ts",
     "setupBusiness",
-    "createUser.ts/**/*"
+    "createUser.ts/**/*",
+    "updateServices/**/*"
   ]
 }

@@ -7,6 +7,7 @@
   "scripts": {
     "start": "tsx --env-file=.env index.ts",
     "create-user": "tsx --env-file=.env createUser.ts/index.ts",
+    "update-services": "tsx --env-file=.env updateServices/index.ts",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
