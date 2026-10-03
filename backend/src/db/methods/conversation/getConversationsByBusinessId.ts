@@ -18,13 +18,21 @@ export default async function getConversationsByBusinessId(
       .select("-_id -__v")
       .sort({ updatedAt: -1 });
 
+    console.log(
+      `[conversations] DB query for businessId=${businessId} found ${conversations.length} conversation(s)`,
+    );
+
     const conversationsWithMessages = await Promise.all(
-      conversations.map(async (conversation) => ({
-        ...conversation.toObject(),
-        // Each conversation ships with its full thread so the frontend can
-        // render the list preview and the open chat in a single request.
-        messages: (await getMessagesByConversationId(conversation.id)) ?? [],
-      })),
+      conversations.map(async (conversation) => {
+        const messages = (await getMessagesByConversationId(conversation.id)) ?? [];
+
+        return {
+          ...conversation.toObject(),
+          // Each conversation ships with its full thread so the frontend can
+          // render the list preview and the open chat in a single request.
+          messages,
+        };
+      }),
     );
 
     return conversationsWithMessages;

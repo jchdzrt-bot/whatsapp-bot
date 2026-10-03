@@ -34,14 +34,35 @@ conversationRouter.get(
     const { businessId } = req.query;
 
     if (!businessId) {
+      console.log("[conversations] GET /conversation rejected — businessId is required");
       return res.status(400).json({ error: "businessId is required" });
     }
+
+    console.log(`[conversations] GET /conversation?businessId=${businessId} — handler started`);
 
     try {
       const conversations = await getConversationsByBusinessId(businessId);
 
+      const conversationCount = Array.isArray(conversations)
+        ? conversations.length
+        : 0;
+      const messageCount = Array.isArray(conversations)
+        ? conversations.reduce(
+            (total, conversation) => total + (conversation.messages?.length ?? 0),
+            0,
+          )
+        : 0;
+
+      console.log(
+        `[conversations] GET /conversation?businessId=${businessId} — returning ${conversationCount} conversation(s) with ${messageCount} total message(s)`,
+      );
+
       res.status(200).json(conversations ?? []);
     } catch (error) {
+      console.error(
+        `[conversations] GET /conversation?businessId=${businessId} — FAILED`,
+        error,
+      );
       next(error);
     }
   },

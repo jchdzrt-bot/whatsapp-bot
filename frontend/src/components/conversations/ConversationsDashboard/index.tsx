@@ -92,21 +92,42 @@ export default function ConversationsDashboard() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!businessId) return;
+    if (!businessId) {
+      console.log("[conversations:ui] No businessId in the auth store — skipping fetch");
+      return;
+    }
     let cancelled = false;
     setLoading(true);
     setError(null);
 
+    console.log(`[conversations:ui] Fetching conversations for businessId=${businessId}`);
     getConversations(businessId)
       .then((data) => {
         if (cancelled) return;
         // Never assume the wire shape: guard before mapping to UI rows.
         const ui = (Array.isArray(data) ? data : []).map(toUiConversation);
+        console.log(
+          `[conversations:ui] businessId=${businessId} — received ${Array.isArray(data) ? data.length : "n/a"} raw conversation(s), mapped ${ui.length} UI row(s). First ids: ${ui.slice(0, 5).map((c) => c.id).join(", ") || "(none)"}`,
+        );
         setConversations(ui);
         setSelectedId((current) => current || ui[0]?.id || "");
+        if (ui.length > 0) {
+          const first = ui[0];
+          console.log(
+            `[conversations:ui] Auto-selected "${first.contact.name}" (${first.id}) with ${first.messages.length} message(s)`,
+          );
+        } else {
+          console.log("[conversations:ui] No conversations to select — list is empty");
+        }
       })
-      .catch(() => {
-        if (!cancelled) setError("No se pudieron cargar las conversaciones.");
+      .catch((error) => {
+        if (!cancelled) {
+          console.error(
+            `[conversations:ui] businessId=${businessId} — fetch FAILED`,
+            error,
+          );
+          setError("No se pudieron cargar las conversaciones.");
+        }
       })
       .finally(() => {
         if (!cancelled) setLoading(false);

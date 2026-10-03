@@ -9,6 +9,10 @@ export default async function getMessagesByConversationId(
       .select("-_id -__v")
       .sort({ createdAt: 1 });
 
+    console.log(
+      `[conversations] DB query for conversationId=${conversationId} found ${messages.length} message(s)`,
+    );
+
     return messages.map((message) => message.toObject());
   } catch (error) {
     simpleErrorHandling(

@@ -5,13 +5,28 @@ import type { ConversationWithMessages, Message } from "./types";
 export async function getConversations(
   businessId: string,
 ): Promise<ConversationWithMessages[]> {
-  const data = await apiCall<ConversationWithMessages[]>({
-    method: "GET",
-    url: "/conversation",
-    params: { businessId },
-  });
-  // Same hardening as the other list endpoints: never trust the wire shape.
-  return Array.isArray(data) ? data : [];
+  console.log(`[conversations] GET /conversation?businessId=${businessId} — sending request`);
+
+  try {
+    const data = await apiCall<ConversationWithMessages[]>({
+      method: "GET",
+      url: "/conversation",
+      params: { businessId },
+    });
+
+    console.log(
+      `[conversations] GET /conversation?businessId=${businessId} — response OK, ${Array.isArray(data) ? data.length : "n/a"} conversation(s) in payload`,
+    );
+
+    // Same hardening as the other list endpoints: never trust the wire shape.
+    return Array.isArray(data) ? data : [];
+  } catch (error) {
+    console.error(
+      `[conversations] GET /conversation?businessId=${businessId} — request FAILED`,
+      error,
+    );
+    throw error;
+  }
 }
 
 /** Persists a manual reply as an outbound message on the conversation. */
