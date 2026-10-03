@@ -34,9 +34,7 @@ export default function AppointmentChip({ tint, children, title }: AppointmentCh
         px: 0.75,
         py: 0.35,
         borderRadius: `${tokens.radius.chip}px`,
-        whiteSpace: "nowrap",
         overflow: "hidden",
-        textOverflow: "ellipsis",
         cursor: "pointer",
         "&:hover": { filter: "brightness(0.96)" },
       }}

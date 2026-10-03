@@ -8,6 +8,8 @@
 export type AppointmentTint = "violet" | "aqua";
 
 export interface AppointmentInfo {
+  /** Customer name on the chip (falls back to the client phone number). */
+  clientName: string;
   worker: string;
   service: string;
   tint: AppointmentTint;

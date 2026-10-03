@@ -83,9 +83,35 @@ export default function WeeklyCalendar({ days, timeSlots }: WeeklyCalendarProps)
               {appointment && (
                 <AppointmentChip
                   tint={appointment.tint}
-                  title={`${appointment.worker} · ${appointment.service}`}
+                  title={`${appointment.clientName} · ${appointment.worker} · ${appointment.service}`}
                 >
-                  {appointment.worker} · {appointment.service}
+                  <Box
+                    sx={{
+                      lineHeight: 1.3,
+                      minWidth: 0,
+                    }}
+                  >
+                    <Box
+                      sx={{
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                        whiteSpace: "nowrap",
+                        fontWeight: 600,
+                      }}
+                    >
+                      {appointment.clientName}
+                    </Box>
+                    <Box
+                      sx={{
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                        whiteSpace: "nowrap",
+                        opacity: 0.9,
+                      }}
+                    >
+                      {appointment.worker} · {appointment.service}
+                    </Box>
+                  </Box>
                 </AppointmentChip>
               )}
             </Box>

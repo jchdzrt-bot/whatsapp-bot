@@ -155,6 +155,10 @@ export default function AppointmentDashboard() {
 
         const worker = workers.find((candidate) => candidate.id === appointment.workerId);
         return {
+          clientName:
+            appointment.clientName?.trim() ||
+            appointment.clientPhoneNumber ||
+            "Cliente",
           worker: worker
             ? `${worker.firstName} ${worker.lastName}`.trim()
             : "Trabajador",
