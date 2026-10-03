@@ -13,6 +13,6 @@ export const BUSINESS_ID = "e8e99575-a897-46d3-b80c-1b62a8183603";
 // complete list here (add/remove services, adjust durations, then re-run).
 export const BUSINESS_SERVICES: Record<string, string> = {
   "Corte de cabello": "30 min",
-  Barba: "15 min",
+  Barba: "20 min",
   "Corte + Barba": "45 min",
 };
