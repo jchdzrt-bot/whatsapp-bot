@@ -15,6 +15,8 @@ interface AppointmentChipProps {
   title?: string;
   /** Opens the appointment details modal. */
   onClick?: () => void;
+  /** Frozen (past) slots: no click handler and a muted look. */
+  disabled?: boolean;
 }
 
 /** Small tinted appointment pill, e.g. "Ana · Corte". */
@@ -23,6 +25,7 @@ export default function AppointmentChip({
   children,
   title,
   onClick,
+  disabled,
 }: AppointmentChipProps) {
   const style = TINT_STYLES[tint];
 
@@ -30,8 +33,8 @@ export default function AppointmentChip({
     <Box
       component="div"
       title={title}
-      role={onClick ? "button" : undefined}
-      onClick={onClick}
+      role={onClick && !disabled ? "button" : undefined}
+      onClick={disabled ? undefined : onClick}
       sx={{
         width: "fit-content",
         maxWidth: "100%",
@@ -44,8 +47,15 @@ export default function AppointmentChip({
         py: 0.35,
         borderRadius: `${tokens.radius.chip}px`,
         overflow: "hidden",
-        cursor: "pointer",
-        "&:hover": { filter: "brightness(0.96)" },
+        ...(disabled
+          ? {
+              opacity: 0.55,
+              cursor: "default",
+            }
+          : {
+              cursor: "pointer",
+              "&:hover": { filter: "brightness(0.96)" },
+            }),
       }}
     >
       {children}

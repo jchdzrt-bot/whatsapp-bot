@@ -73,3 +73,13 @@ export function formatClockTime(iso: string): string {
   const minutes = String(date.getMinutes()).padStart(2, "0");
   return `${hours}:${minutes}`;
 }
+
+/**
+ * True when the local date/time (YYYY-MM-DD + HH:mm) has already passed.
+ * Used to freeze past calendar slots and to reject past dates in the
+ * new-appointment form. Malformed inputs are treated as not past.
+ */
+export function isPastDateTime(dateISO: string, time: string): boolean {
+  const when = new Date(`${dateISO}T${time}:00`);
+  return !Number.isNaN(when.getTime()) && when.getTime() < Date.now();
+}

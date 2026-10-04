@@ -17,6 +17,7 @@ import type {
   Business,
   CreateAppointmentPayload,
 } from "../../../api/types";
+import { isPastDateTime } from "../dateUtils";
 import { tokens } from "../../tokens";
 
 type AppointmentOrigin = "bot" | "manual";
@@ -92,6 +93,8 @@ export default function NewAppointment({
   const nameError = showErrors && clientName.trim() === "";
   const phoneError = showErrors && clientPhone.trim() === "";
   const timeError = showErrors && time.trim() === "";
+  const pastDateTimeError =
+    showErrors && !timeError && isPastDateTime(date, time);
   const missingOptions = workerId === "" || service === "";
 
   const handleSave = async () => {
@@ -100,6 +103,7 @@ export default function NewAppointment({
       clientName.trim() === "" ||
       clientPhone.trim() === "" ||
       time.trim() === "" ||
+      isPastDateTime(date, time) ||
       missingOptions
     ) {
       return;
@@ -260,8 +264,14 @@ export default function NewAppointment({
             type="time"
             value={time}
             onChange={(event) => setTime(event.target.value)}
-            error={timeError}
-            helperText={timeError ? "Ingresa la hora de la cita" : undefined}
+            error={timeError || pastDateTimeError}
+            helperText={
+              timeError
+                ? "Ingresa la hora de la cita"
+                : pastDateTimeError
+                  ? "La fecha y hora ya pasaron. Elige un momento futuro."
+                  : undefined
+            }
           />
         </Box>
 

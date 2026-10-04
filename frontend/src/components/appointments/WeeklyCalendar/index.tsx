@@ -1,5 +1,6 @@
 import { Box, Paper, Typography } from "@mui/material";
 import type { DayHeader, TimeSlot } from "../data";
+import { isPastDateTime } from "../dateUtils";
 import AppointmentChip from "../AppointmentChip";
 import { tokens } from "../../tokens";
 
@@ -78,70 +79,77 @@ export default function WeeklyCalendar({
           >
             {slot.time}
           </Box>
-          {slot.cells.map((appointment, index) => (
-            <Box
-              key={`${slot.time}-${index}`}
-              role={appointment || !onEmptySlotClick ? undefined : "button"}
-              onClick={
-                appointment || !onEmptySlotClick
-                  ? undefined
-                  : () => onEmptySlotClick(days[index].dateISO, slot.time)
-              }
-              sx={{
-                borderLeft: `0.5px solid ${tokens.color.border}`,
-                minHeight: 44,
-                p: 0.4,
-                ...(appointment
-                  ? {}
-                  : onEmptySlotClick
-                    ? {
-                        cursor: "pointer",
-                        "&:hover": { bgcolor: tokens.color.accentMutedBg },
-                      }
-                    : {}),
-              }}
-            >
-              {appointment && (
-                <AppointmentChip
-                  tint={appointment.tint}
-                  title={`${appointment.clientName} · ${appointment.worker} · ${appointment.service}`}
-                  onClick={
-                    onAppointmentClick
-                      ? () => onAppointmentClick(appointment.id)
-                      : undefined
-                  }
-                >
-                  <Box
-                    sx={{
-                      lineHeight: 1.3,
-                      minWidth: 0,
-                    }}
+          {slot.cells.map((appointment, index) => {
+            // Frozen slots (already passed) can't open details nor add a cita.
+            const past = isPastDateTime(days[index].dateISO, slot.time);
+            return (
+              <Box
+                key={`${slot.time}-${index}`}
+                role={
+                  appointment || past || !onEmptySlotClick ? undefined : "button"
+                }
+                onClick={
+                  appointment || past || !onEmptySlotClick
+                    ? undefined
+                    : () => onEmptySlotClick(days[index].dateISO, slot.time)
+                }
+                sx={{
+                  borderLeft: `0.5px solid ${tokens.color.border}`,
+                  minHeight: 44,
+                  p: 0.4,
+                  ...(appointment || past
+                    ? {}
+                    : onEmptySlotClick
+                      ? {
+                          cursor: "pointer",
+                          "&:hover": { bgcolor: tokens.color.accentMutedBg },
+                        }
+                      : {}),
+                }}
+              >
+                {appointment && (
+                  <AppointmentChip
+                    tint={appointment.tint}
+                    title={`${appointment.clientName} · ${appointment.worker} · ${appointment.service}`}
+                    disabled={past}
+                    onClick={
+                      !past && onAppointmentClick
+                        ? () => onAppointmentClick(appointment.id)
+                        : undefined
+                    }
                   >
                     <Box
                       sx={{
-                        overflow: "hidden",
-                        textOverflow: "ellipsis",
-                        whiteSpace: "nowrap",
-                        fontWeight: 600,
+                        lineHeight: 1.3,
+                        minWidth: 0,
                       }}
                     >
-                      {appointment.clientName}
+                      <Box
+                        sx={{
+                          overflow: "hidden",
+                          textOverflow: "ellipsis",
+                          whiteSpace: "nowrap",
+                          fontWeight: 600,
+                        }}
+                      >
+                        {appointment.clientName}
+                      </Box>
+                      <Box
+                        sx={{
+                          overflow: "hidden",
+                          textOverflow: "ellipsis",
+                          whiteSpace: "nowrap",
+                          opacity: 0.9,
+                        }}
+                      >
+                        {appointment.worker} · {appointment.service}
+                      </Box>
                     </Box>
-                    <Box
-                      sx={{
-                        overflow: "hidden",
-                        textOverflow: "ellipsis",
-                        whiteSpace: "nowrap",
-                        opacity: 0.9,
-                      }}
-                    >
-                      {appointment.worker} · {appointment.service}
-                    </Box>
-                  </Box>
-                </AppointmentChip>
-              )}
-            </Box>
-          ))}
+                  </AppointmentChip>
+                )}
+              </Box>
+            );
+          })}
         </Box>
       ))}
 

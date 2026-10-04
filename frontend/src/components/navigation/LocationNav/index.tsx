@@ -26,6 +26,8 @@ export default function LocationNav() {
         display: "flex",
         alignItems: "center",
         gap: 1,
+        // A bit of extra breathing room from the right corner of the shell.
+        pr: 1.5,
       }}
     >
       {locations.map((location) => {
