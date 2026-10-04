@@ -97,14 +97,16 @@ export default function WeeklyCalendar({
                   borderLeft: `0.5px solid ${tokens.color.border}`,
                   minHeight: 44,
                   p: 0.4,
-                  ...(appointment || past
-                    ? {}
-                    : onEmptySlotClick
-                      ? {
-                          cursor: "pointer",
-                          "&:hover": { bgcolor: tokens.color.accentMutedBg },
-                        }
-                      : {}),
+                  ...(past
+                    ? { bgcolor: tokens.color.surface3 }
+                    : appointment
+                      ? {}
+                      : onEmptySlotClick
+                        ? {
+                            cursor: "pointer",
+                            "&:hover": { bgcolor: tokens.color.accentMutedBg },
+                          }
+                        : {}),
                 }}
               >
                 {appointment && (
