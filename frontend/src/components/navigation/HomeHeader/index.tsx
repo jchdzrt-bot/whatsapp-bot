@@ -13,8 +13,9 @@ function initialsOf(name: string): string {
 }
 
 /**
- * App shell header: the business avatar + name pinned to the top-left corner,
- * above the location switcher and the Calendario / Chat navigation bars.
+ * App shell header identity: the business avatar + name pinned to the
+ * top-left corner of the shell header row, with the location switcher nav
+ * rendered on the right at the same height.
  */
 export default function HomeHeader() {
   const business = useAppSelector((state) => state.workspace.business);
@@ -23,16 +24,10 @@ export default function HomeHeader() {
 
   return (
     <Box
-      component="header"
-      aria-label="Negocio"
       sx={{
         display: "flex",
         alignItems: "center",
         gap: 1.25,
-        px: 2,
-        py: 1.25,
-        bgcolor: tokens.color.surface1,
-        borderBottom: `0.5px solid ${tokens.color.borderSoft}`,
       }}
     >
       <Avatar

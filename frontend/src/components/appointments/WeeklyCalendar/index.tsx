@@ -11,6 +11,8 @@ interface WeeklyCalendarProps {
   timeSlots: TimeSlot[];
   /** Fired when an appointment chip is clicked so its details modal can open. */
   onAppointmentClick?: (appointmentId: string) => void;
+  /** Fired when an empty slot is clicked so the new-appointment modal can open prefilled. */
+  onEmptySlotClick?: (dateISO: string, time: string) => void;
 }
 
 /** Weekly calendar grid: day header + one row per time slot. */
@@ -18,6 +20,7 @@ export default function WeeklyCalendar({
   days,
   timeSlots,
   onAppointmentClick,
+  onEmptySlotClick,
 }: WeeklyCalendarProps) {
   const emptyMessage =
     days.length === 1 ? "No hay citas para este día" : "No hay citas para esta semana";
@@ -78,15 +81,24 @@ export default function WeeklyCalendar({
           {slot.cells.map((appointment, index) => (
             <Box
               key={`${slot.time}-${index}`}
+              role={appointment || !onEmptySlotClick ? undefined : "button"}
+              onClick={
+                appointment || !onEmptySlotClick
+                  ? undefined
+                  : () => onEmptySlotClick(days[index].dateISO, slot.time)
+              }
               sx={{
                 borderLeft: `0.5px solid ${tokens.color.border}`,
                 minHeight: 44,
                 p: 0.4,
                 ...(appointment
                   ? {}
-                  : {
-                      "&:hover": { bgcolor: tokens.color.accentMutedBg },
-                    }),
+                  : onEmptySlotClick
+                    ? {
+                        cursor: "pointer",
+                        "&:hover": { bgcolor: tokens.color.accentMutedBg },
+                      }
+                    : {}),
               }}
             >
               {appointment && (

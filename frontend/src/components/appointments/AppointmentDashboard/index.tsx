@@ -109,6 +109,13 @@ export default function AppointmentDashboard() {
 
   const [newAppointmentOpen, setNewAppointmentOpen] = useState(false);
 
+  // When the modal is opened from an empty calendar slot, those date/time
+  // values are prefilled. Null means "no prefill" → today's date, empty time.
+  const [newAppointmentPrefill, setNewAppointmentPrefill] = useState<{
+    date: string;
+    time: string;
+  } | null>(null);
+
   const [workers, setWorkers] = useState<Worker[]>([]);
   const [appointments, setAppointments] = useState<Appointment[]>([]);
 
@@ -180,6 +187,7 @@ export default function AppointmentDashboard() {
       visibleDates.map((date) => ({
         label: dayLabel(date),
         date: date.getDate(),
+        dateISO: toISODateString(date),
         isToday: toISODateString(date) === todayISO,
       })),
     [visibleDates, todayISO],
@@ -195,10 +203,6 @@ export default function AppointmentDashboard() {
     return [
       { label: "Citas hoy", value: active.filter((a) => a.date === todayISO).length },
       { label: "Esta semana", value: active.filter((a) => weekISO.has(a.date)).length },
-      {
-        label: "Por confirmar",
-        value: active.filter((a) => a.status === "needs_rescheduling").length,
-      },
     ];
   }, [appointments, todayISO, weekISO]);
 
@@ -314,6 +318,12 @@ export default function AppointmentDashboard() {
     setSelectedAppointmentId(appointmentId);
   };
 
+  /** Opens the "Nueva cita" modal prefilled with the clicked empty slot. */
+  const openAppointmentAt = (dateISO: string, time: string) => {
+    setNewAppointmentPrefill({ date: dateISO, time });
+    setNewAppointmentOpen(true);
+  };
+
   /**
    * Persists the cancellation through PATCH /appointment/:id and replaces the
    * local copy, so the calendar/stats drop the cancelled appointment and the
@@ -359,7 +369,11 @@ export default function AppointmentDashboard() {
       ) : (
         <>
           <AppointmentsToolbar
-            onNewAppointment={() => setNewAppointmentOpen(true)}
+            onNewAppointment={() => {
+              // Toolbar button starts from today's date with an empty time.
+              setNewAppointmentPrefill(null);
+              setNewAppointmentOpen(true);
+            }}
           />
 
           {error && (
@@ -379,6 +393,7 @@ export default function AppointmentDashboard() {
             days={days}
             timeSlots={timeSlots}
             onAppointmentClick={openAppointmentDetails}
+            onEmptySlotClick={openAppointmentAt}
           />
 
           <Typography
@@ -403,7 +418,8 @@ export default function AppointmentDashboard() {
                 label: `${worker.firstName} ${worker.lastName}`.trim(),
               }))}
               services={Object.keys(business.service ?? {})}
-              defaultDate={todayISO}
+              defaultDate={newAppointmentPrefill?.date ?? todayISO}
+              defaultTime={newAppointmentPrefill?.time ?? ""}
               onSave={handleSaveAppointment}
             />
           )}

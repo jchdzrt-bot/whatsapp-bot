@@ -32,6 +32,8 @@ interface NewAppointmentProps {
   services: string[];
   /** Today in YYYY-MM-DD — the default date of the form. */
   defaultDate: string;
+  /** HH:mm prefilled in the time field when the modal opens from an empty slot. */
+  defaultTime?: string;
   onSave: (payload: CreateAppointmentPayload) => Promise<void>;
 }
 
@@ -47,6 +49,7 @@ export default function NewAppointment({
   workers,
   services,
   defaultDate,
+  defaultTime,
   onSave,
 }: NewAppointmentProps) {
   const [workerId, setWorkerId] = useState("");
@@ -71,6 +74,20 @@ export default function NewAppointment({
       services.includes(current) ? current : (services[0] ?? ""),
     );
   }, [workers, services]);
+
+  // Apply the caller-provided defaults (e.g. the date/time of the empty slot
+  // clicked on the calendar) every time the modal opens, and clear any state
+  // left behind by a previous submission or cancel.
+  useEffect(() => {
+    if (!open) return;
+    setDate(defaultDate);
+    setTime(defaultTime ?? "");
+    setClientName("");
+    setClientPhone("");
+    setShowErrors(false);
+    setSaveError(null);
+    setSaving(false);
+  }, [open, defaultDate, defaultTime]);
 
   const nameError = showErrors && clientName.trim() === "";
   const phoneError = showErrors && clientPhone.trim() === "";

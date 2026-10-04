@@ -5,9 +5,9 @@ import { workspaceLocationSelected } from "../../../store/workspace/workspaceSli
 import { tokens } from "../../tokens";
 
 /**
- * Location switcher: one segmented pill per branch of the business. It sits
- * below the shell header and above the Calendario / Chat navigation so the
- * active branch is always visible and switchable from either section.
+ * Location switcher: one segmented pill per branch of the business. It renders
+ * on the right side of the app shell header, at the same height as the
+ * business avatar, so the active branch is always visible and switchable.
  */
 export default function LocationNav() {
   const dispatch = useAppDispatch();
@@ -26,10 +26,6 @@ export default function LocationNav() {
         display: "flex",
         alignItems: "center",
         gap: 1,
-        px: 2,
-        py: 0.75,
-        bgcolor: tokens.color.surface1,
-        borderBottom: `0.5px solid ${tokens.color.borderSoft}`,
       }}
     >
       {locations.map((location) => {

@@ -10,7 +10,7 @@ interface StatsCardsProps {
   stats: StatCard[];
 }
 
-/** Row of quick-stat cards: hoy / semana / por confirmar. */
+/** Row of quick-stat cards: hoy / semana. */
 export default function StatsCards({ stats }: StatsCardsProps) {
   return (
     <Box

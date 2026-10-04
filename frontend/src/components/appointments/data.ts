@@ -21,6 +21,8 @@ export interface AppointmentInfo {
 export interface DayHeader {
   label: string;
   date: number;
+  /** Local "YYYY-MM-DD" of the column, used when prefilling the new-appointment modal from an empty slot. */
+  dateISO: string;
   isToday: boolean;
 }
 
