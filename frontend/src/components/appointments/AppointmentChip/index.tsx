@@ -13,16 +13,25 @@ interface AppointmentChipProps {
   children: ReactNode;
   /** Optional native tooltip, e.g. "Ana · Corte". */
   title?: string;
+  /** Opens the appointment details modal. */
+  onClick?: () => void;
 }
 
 /** Small tinted appointment pill, e.g. "Ana · Corte". */
-export default function AppointmentChip({ tint, children, title }: AppointmentChipProps) {
+export default function AppointmentChip({
+  tint,
+  children,
+  title,
+  onClick,
+}: AppointmentChipProps) {
   const style = TINT_STYLES[tint];
 
   return (
     <Box
       component="div"
       title={title}
+      role={onClick ? "button" : undefined}
+      onClick={onClick}
       sx={{
         width: "fit-content",
         maxWidth: "100%",

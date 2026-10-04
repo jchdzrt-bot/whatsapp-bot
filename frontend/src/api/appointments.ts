@@ -26,3 +26,22 @@ export async function createAppointment(
     data: payload,
   });
 }
+
+/**
+ * Cancels an appointment in the backend. The PATCH endpoint
+ * (backend/src/routes/mongo/user/appointment.ts) persists the status change
+ * and returns the updated document under `{ appointment }`.
+ */
+export async function cancelAppointment(appointmentId: string): Promise<Appointment> {
+  const data = await apiCall<{ appointment: Appointment }>({
+    method: "PATCH",
+    url: `/appointment/${appointmentId}`,
+    data: { status: "cancelled", lastModifiedBy: "manual" },
+  });
+
+  if (!data || typeof data !== "object" || !data.appointment) {
+    throw new Error("Unexpected cancel appointment payload from the API");
+  }
+
+  return data.appointment;
+}

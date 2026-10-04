@@ -9,10 +9,16 @@ const GRID_TEMPLATE = (columns: number) => `56px repeat(${columns}, minmax(0, 1f
 interface WeeklyCalendarProps {
   days: DayHeader[];
   timeSlots: TimeSlot[];
+  /** Fired when an appointment chip is clicked so its details modal can open. */
+  onAppointmentClick?: (appointmentId: string) => void;
 }
 
 /** Weekly calendar grid: day header + one row per time slot. */
-export default function WeeklyCalendar({ days, timeSlots }: WeeklyCalendarProps) {
+export default function WeeklyCalendar({
+  days,
+  timeSlots,
+  onAppointmentClick,
+}: WeeklyCalendarProps) {
   const emptyMessage =
     days.length === 1 ? "No hay citas para este día" : "No hay citas para esta semana";
 
@@ -87,6 +93,11 @@ export default function WeeklyCalendar({ days, timeSlots }: WeeklyCalendarProps)
                 <AppointmentChip
                   tint={appointment.tint}
                   title={`${appointment.clientName} · ${appointment.worker} · ${appointment.service}`}
+                  onClick={
+                    onAppointmentClick
+                      ? () => onAppointmentClick(appointment.id)
+                      : undefined
+                  }
                 >
                   <Box
                     sx={{

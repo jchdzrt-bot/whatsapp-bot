@@ -8,6 +8,8 @@
 export type AppointmentTint = "violet" | "aqua";
 
 export interface AppointmentInfo {
+  /** Appointment id, used to open the details modal from the chip. */
+  id: string;
   /** Customer name on the chip (falls back to the client phone number). */
   clientName: string;
   worker: string;
@@ -37,4 +39,4 @@ export interface TimeSlot {
 export const workerFilterLabel = "Todos los trabajadores";
 
 export const calendarHint =
-  "Click en una cita para editarla · Click en un espacio vacío para agregar una nueva";
+  "Click en una cita para ver sus detalles · Click en un espacio vacío para agregar una nueva";
