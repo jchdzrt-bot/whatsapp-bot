@@ -1,4 +1,4 @@
-import { Box, CircularProgress, Paper, Typography } from "@mui/material";
+import { Box, CircularProgress, Paper, Typography, useMediaQuery } from "@mui/material";
 import { useEffect, useMemo, useState } from "react";
 import { calendarHint } from "../data";
 import type { AppointmentInfo, DayHeader, TimeSlot } from "../data";
@@ -15,8 +15,9 @@ import type {
   Worker,
 } from "../../../api/types";
 import { useAppSelector } from "../../../store/hooks";
-import { tokens } from "../../tokens";
+import { breakpoints, tokens } from "../../tokens";
 import {
+  formatDayLabel,
   formatWeekRangeLabel,
   dayLabel,
   toISODateString,
@@ -44,8 +45,9 @@ function tintForWorker(workerId: string): AppointmentInfo["tint"] {
 }
 
 /**
- * Appointment dashboard. The displayed week, stats and calendar rows are all
- * computed from real backend data (business/locations/workers/appointments).
+ * Appointment dashboard. The displayed week (or single day on phones), stats
+ * and calendar rows are all computed from real backend data
+ * (business/locations/workers/appointments).
  */
 export default function AppointmentDashboard() {
   const business = useAppSelector((state) => state.workspace.business);
@@ -59,7 +61,10 @@ export default function AppointmentDashboard() {
   const [workers, setWorkers] = useState<Worker[]>([]);
   const [appointments, setAppointments] = useState<Appointment[]>([]);
 
-  const [weekAnchor, setWeekAnchor] = useState(() => new Date());
+  const [anchor, setAnchor] = useState(() => new Date());
+
+  // Phones/compact viewports show one day at a time; wider screens the week.
+  const isMobile = useMediaQuery(`(max-width: ${breakpoints.calendarSingleDayMax})`);
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -94,26 +99,42 @@ export default function AppointmentDashboard() {
     };
   }, [selectedLocationId]);
 
-  const week = useMemo(() => weekDates(weekAnchor), [weekAnchor]);
+  const week = useMemo(() => weekDates(anchor), [anchor]);
 
+  // On phones only the anchor day is visible; on wider screens the whole week.
+  const visibleDates = useMemo(
+    () => (isMobile ? [anchor] : week),
+    [isMobile, anchor, week],
+  );
+
+  // Full week (Mon–Sun) used by the "Esta semana" stat card.
   const weekISO = useMemo(
     () => new Set(week.map((date) => toISODateString(date))),
     [week],
+  );
+
+  // Dates currently rendered in the calendar (1 day on phones, 7 on desktop).
+  const visibleISO = useMemo(
+    () => new Set(visibleDates.map((date) => toISODateString(date))),
+    [visibleDates],
   );
 
   const todayISO = useMemo(() => toISODateString(new Date()), []);
 
   const days = useMemo<DayHeader[]>(
     () =>
-      week.map((date) => ({
+      visibleDates.map((date) => ({
         label: dayLabel(date),
         date: date.getDate(),
         isToday: toISODateString(date) === todayISO,
       })),
-    [week, todayISO],
+    [visibleDates, todayISO],
   );
 
-  const weekRangeLabel = useMemo(() => formatWeekRangeLabel(week), [week]);
+  const navLabel = useMemo(
+    () => (isMobile ? formatDayLabel(anchor) : formatWeekRangeLabel(week)),
+    [isMobile, anchor, week],
+  );
 
   const stats = useMemo(() => {
     const active = appointments.filter((appointment) => appointment.status !== "cancelled");
@@ -130,7 +151,7 @@ export default function AppointmentDashboard() {
   const timeSlots = useMemo<TimeSlot[]>(() => {
     const byDayAndTime = new Map<string, Appointment>();
     for (const appointment of appointments) {
-      if (appointment.status === "cancelled" || !weekISO.has(appointment.date)) continue;
+      if (appointment.status === "cancelled" || !visibleISO.has(appointment.date)) continue;
       const key = `${appointment.date}__${appointment.time}`;
       // One chip per (day, time) slot; booking conflicts are rejected backend-side.
       if (!byDayAndTime.has(key)) byDayAndTime.set(key, appointment);
@@ -141,7 +162,7 @@ export default function AppointmentDashboard() {
         appointments
           .filter(
             (appointment) =>
-              appointment.status !== "cancelled" && weekISO.has(appointment.date),
+              appointment.status !== "cancelled" && visibleISO.has(appointment.date),
           )
           .map((appointment) => appointment.time),
       ),
@@ -149,7 +170,7 @@ export default function AppointmentDashboard() {
 
     return times.map((time) => ({
       time,
-      cells: week.map((date) => {
+      cells: visibleDates.map((date) => {
         const appointment = byDayAndTime.get(`${toISODateString(date)}__${time}`);
         if (!appointment) return null;
 
@@ -167,18 +188,19 @@ export default function AppointmentDashboard() {
         };
       }),
     }));
-  }, [appointments, week, weekISO, workers]);
+  }, [appointments, visibleDates, visibleISO, workers]);
 
-  const showPreviousWeek = () => {
-    const previous = new Date(weekAnchor);
-    previous.setDate(previous.getDate() - 7);
-    setWeekAnchor(previous);
+  const showPrevious = () => {
+    const previous = new Date(anchor);
+    // Arrows move day by day on phones (single-day view) and week by week on desktop.
+    previous.setDate(previous.getDate() - (isMobile ? 1 : 7));
+    setAnchor(previous);
   };
 
-  const showNextWeek = () => {
-    const next = new Date(weekAnchor);
-    next.setDate(next.getDate() + 7);
-    setWeekAnchor(next);
+  const showNext = () => {
+    const next = new Date(anchor);
+    next.setDate(next.getDate() + (isMobile ? 1 : 7));
+    setAnchor(next);
   };
 
   const handleSaveAppointment = async (payload: CreateAppointmentPayload) => {
@@ -230,9 +252,10 @@ export default function AppointmentDashboard() {
 
           <StatsCards stats={stats} />
           <WeekNavigator
-            rangeLabel={weekRangeLabel}
-            onPrevious={showPreviousWeek}
-            onNext={showNextWeek}
+            rangeLabel={navLabel}
+            onPrevious={showPrevious}
+            onNext={showNext}
+            isDay={isMobile}
           />
           <WeeklyCalendar days={days} timeSlots={timeSlots} />
 

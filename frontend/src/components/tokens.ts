@@ -40,3 +40,7 @@ export const tokens = {
     tintMintText: "#0f8a4d",
   },
 } as const;
+export const breakpoints = {
+  /** Below this width the calendar shows one day at a time (phones/compact). */
+  calendarSingleDayMax: "767.98px",
+} as const;

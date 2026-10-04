@@ -33,6 +33,17 @@ export function dayLabel(date: Date): string {
   return DAY_LABELS[date.getDay()];
 }
 
+/** Long Spanish weekday label, e.g. "jueves". */
+function weekdayLabel(date: Date): string {
+  return new Intl.DateTimeFormat("es-MX", { weekday: "long" }).format(date);
+}
+
+/** Single-day navigator label, e.g. "Jueves, 15 de septiembre". */
+export function formatDayLabel(date: Date): string {
+  const weekday = weekdayLabel(date);
+  return `${weekday[0].toUpperCase()}${weekday.slice(1)}, ${date.getDate()} de ${monthLabel(date)}`;
+}
+
 /** Spanish month name, e.g. "septiembre". */
 function monthLabel(date: Date): string {
   return new Intl.DateTimeFormat("es-MX", { month: "long" }).format(date);

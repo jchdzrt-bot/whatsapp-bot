@@ -3,8 +3,8 @@ import type { DayHeader, TimeSlot } from "../data";
 import AppointmentChip from "../AppointmentChip";
 import { tokens } from "../../tokens";
 
-/** Time gutter width + 7 weekday columns (same for header and rows). */
-const GRID_TEMPLATE = "56px repeat(7, minmax(0, 1fr))";
+/** Time gutter width + one column per visible day (same for header and rows). */
+const GRID_TEMPLATE = (columns: number) => `56px repeat(${columns}, minmax(0, 1fr))`;
 
 interface WeeklyCalendarProps {
   days: DayHeader[];
@@ -13,6 +13,9 @@ interface WeeklyCalendarProps {
 
 /** Weekly calendar grid: day header + one row per time slot. */
 export default function WeeklyCalendar({ days, timeSlots }: WeeklyCalendarProps) {
+  const emptyMessage =
+    days.length === 1 ? "No hay citas para este día" : "No hay citas para esta semana";
+
   return (
     <Paper
       elevation={0}
@@ -24,7 +27,7 @@ export default function WeeklyCalendar({ days, timeSlots }: WeeklyCalendarProps)
       }}
     >
       {/* Day headers: Lun → Dom, today highlighted */}
-      <Box sx={{ display: "grid", gridTemplateColumns: GRID_TEMPLATE }}>
+      <Box sx={{ display: "grid", gridTemplateColumns: GRID_TEMPLATE(days.length) }}>
         <Box />
         {days.map((day) => (
           <Box
@@ -50,7 +53,7 @@ export default function WeeklyCalendar({ days, timeSlots }: WeeklyCalendarProps)
           key={slot.time}
           sx={{
             display: "grid",
-            gridTemplateColumns: GRID_TEMPLATE,
+            gridTemplateColumns: GRID_TEMPLATE(days.length),
             borderTop: `0.5px solid ${tokens.color.border}`,
           }}
         >
@@ -135,7 +138,7 @@ export default function WeeklyCalendar({ days, timeSlots }: WeeklyCalendarProps)
               py: 3,
             }}
           >
-            No hay citas para esta semana
+            {emptyMessage}
           </Typography>
         </Box>
       )}

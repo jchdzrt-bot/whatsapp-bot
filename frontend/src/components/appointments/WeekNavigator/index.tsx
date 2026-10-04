@@ -1,21 +1,25 @@
 import ChevronLeft from "@mui/icons-material/ChevronLeft";
 import ChevronRight from "@mui/icons-material/ChevronRight";
-import { Box, Button, IconButton, Typography } from "@mui/material";
+import { Box, IconButton, Typography } from "@mui/material";
 import { tokens } from "../../tokens";
-
-const VIEWS = ["Semana", "Día"] as const;
 
 interface WeekNavigatorProps {
   rangeLabel: string;
   onPrevious: () => void;
   onNext: () => void;
+  /**
+   * Day-granularity mode (phone layout): "Día anterior/…siguiente" labels,
+   * larger touch targets and a slightly larger label.
+   */
+  isDay?: boolean;
 }
 
-/** Week prev/next navigation, displayed range and Semana/Día view toggle. */
+/** Prev/next arrow navigation with the displayed range label (week or day). */
 export default function WeekNavigator({
   rangeLabel,
   onPrevious,
   onNext,
+  isDay = false,
 }: WeekNavigatorProps) {
   return (
     <Box
@@ -30,60 +34,42 @@ export default function WeekNavigator({
     >
       <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
         <IconButton
-          aria-label="Semana anterior"
+          aria-label={isDay ? "Día anterior" : "Semana anterior"}
           size="small"
           onClick={onPrevious}
           sx={{
             boxSizing: "border-box",
-            width: 28,
-            height: 28,
+            width: isDay ? 36 : 28,
+            height: isDay ? 36 : 28,
             color: tokens.color.textSecondary,
           }}
         >
-          <ChevronLeft sx={{ fontSize: 14 }} />
+          <ChevronLeft sx={{ fontSize: isDay ? 18 : 14 }} />
         </IconButton>
-        <Typography sx={{ fontSize: 14, fontWeight: 500 }}>{rangeLabel}</Typography>
+        <Typography
+          sx={{
+            fontSize: isDay ? 15 : 14,
+            fontWeight: 500,
+            lineHeight: 1.3,
+            minWidth: 0,
+            textAlign: "center",
+          }}
+        >
+          {rangeLabel}
+        </Typography>
         <IconButton
-          aria-label="Semana siguiente"
+          aria-label={isDay ? "Día siguiente" : "Semana siguiente"}
           size="small"
           onClick={onNext}
           sx={{
             boxSizing: "border-box",
-            width: 28,
-            height: 28,
+            width: isDay ? 36 : 28,
+            height: isDay ? 36 : 28,
             color: tokens.color.textSecondary,
           }}
         >
-          <ChevronRight sx={{ fontSize: 14 }} />
+          <ChevronRight sx={{ fontSize: isDay ? 18 : 14 }} />
         </IconButton>
-      </Box>
-
-      <Box sx={{ display: "flex", gap: 0.75 }}>
-        {VIEWS.map((view, index) => {
-          const isActive = index === 0;
-          return (
-            <Button
-              key={view}
-              size="small"
-              sx={{
-                boxSizing: "border-box",
-                height: 28,
-                minWidth: 0,
-                px: 1.5,
-                fontSize: 12,
-                borderRadius: "8px",
-                textTransform: "none",
-                color: isActive ? tokens.color.text : tokens.color.textSecondary,
-                bgcolor: isActive ? tokens.color.fillSecondary : "transparent",
-                "&:hover": {
-                  bgcolor: isActive ? tokens.color.fillSecondaryHover : tokens.color.surface2,
-                },
-              }}
-            >
-              {view}
-            </Button>
-          );
-        })}
       </Box>
     </Box>
   );
