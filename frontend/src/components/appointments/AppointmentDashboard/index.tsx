@@ -125,7 +125,7 @@ export default function AppointmentDashboard() {
   const [selectedAppointmentId, setSelectedAppointmentId] = useState<string | null>(null);
 
   // Phones/compact viewports show one day at a time; wider screens the week.
-  const isMobile = useMediaQuery(`(max-width: ${breakpoints.calendarSingleDayMax})`);
+  const isMobile = useMediaQuery(`(max-width: ${breakpoints.mobileMax})`);
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);

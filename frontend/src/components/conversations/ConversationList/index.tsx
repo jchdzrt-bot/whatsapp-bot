@@ -8,10 +8,17 @@ interface ConversationListProps {
   conversations: Conversation[];
   selectedId: string;
   onSelect: (id: string) => void;
+  /** True when rendered full-screen on a phone (no right neighbor, no divider). */
+  mobile?: boolean;
 }
 
 /** Left rail: search box + scrollable list of conversations. */
-export default function ConversationList({ conversations, selectedId, onSelect }: ConversationListProps) {
+export default function ConversationList({
+  conversations,
+  selectedId,
+  onSelect,
+  mobile = false,
+}: ConversationListProps) {
   const [query, setQuery] = useState("");
 
   const normalizedQuery = query.trim().toLocaleLowerCase();
@@ -29,7 +36,7 @@ export default function ConversationList({ conversations, selectedId, onSelect }
       component="section"
       aria-label="Conversaciones"
       sx={{
-        borderRight: `0.5px solid ${tokens.color.border}`,
+        ...(mobile ? {} : { borderRight: `0.5px solid ${tokens.color.border}` }),
         display: "flex",
         flexDirection: "column",
         minWidth: 0,
@@ -52,6 +59,7 @@ export default function ConversationList({ conversations, selectedId, onSelect }
             conversation={conversation}
             selected={conversation.id === selectedId}
             onSelect={() => onSelect(conversation.id)}
+            mobile={mobile}
           />
         ))}
         {filtered.length === 0 && (

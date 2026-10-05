@@ -1,18 +1,21 @@
+import ArrowBack from "@mui/icons-material/ArrowBack";
 import SmartToy from "@mui/icons-material/SmartToy";
-import { Box, Typography } from "@mui/material";
+import { Box, IconButton, Typography } from "@mui/material";
 import { tokens } from "../../tokens";
 import type { Conversation } from "../data";
 import ContactAvatar from "../ContactAvatar";
 
 interface ConversationHeaderProps {
   conversation: Conversation;
+  /** When provided, renders a back arrow that returns to the list (phones). */
+  onBack?: () => void;
 }
 
 /**
  * Contact details + bot status pill for the open conversation.
  * (No "Tomar control" button per the implementation notes.)
  */
-export default function ConversationHeader({ conversation }: ConversationHeaderProps) {
+export default function ConversationHeader({ conversation, onBack }: ConversationHeaderProps) {
   return (
     <Box
       sx={{
@@ -24,6 +27,21 @@ export default function ConversationHeader({ conversation }: ConversationHeaderP
       }}
     >
       <Box sx={{ display: "flex", alignItems: "center", gap: 1.25, minWidth: 0 }}>
+        {onBack && (
+          <IconButton
+            aria-label="Volver a la lista de conversaciones"
+            size="small"
+            onClick={onBack}
+            sx={{
+              boxSizing: "border-box",
+              width: 32,
+              height: 32,
+              color: tokens.color.textSecondary,
+            }}
+          >
+            <ArrowBack sx={{ fontSize: 18 }} />
+          </IconButton>
+        )}
         <ContactAvatar initials={conversation.contact.initials} tint={conversation.tint} />
         <Box sx={{ minWidth: 0 }}>
           <Typography

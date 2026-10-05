@@ -1,6 +1,12 @@
-import { Box, CircularProgress, Paper, Typography } from "@mui/material";
-import { useEffect, useState } from "react";
-import { tokens } from "../../tokens";
+import {
+  Box,
+  CircularProgress,
+  Paper,
+  Typography,
+  useMediaQuery,
+} from "@mui/material";
+import { useEffect, useRef, useState } from "react";
+import { breakpoints, tokens } from "../../tokens";
 import type {
   Conversation,
   ConversationTint,
@@ -27,6 +33,12 @@ const srOnlySx = {
 };
 
 const TINTS: ConversationTint[] = ["violet", "aqua", "coral", "muted"];
+
+/**
+ * App shell chrome stacked above this page on phones: business header row +
+ * section nav. Kept in sync with the Home shell so the chat fills the fold.
+ */
+const MOBILE_CHROME_PX = 108;
 
 /** Initials for the avatar: first letters of the first two words. */
 function initialsFrom(text: string): string {
@@ -86,8 +98,16 @@ function toUiConversation(conversation: ConversationWithMessages): Conversation 
 export default function ConversationsDashboard() {
   const businessId = useAppSelector((state) => state.auth.user?.businessId);
 
+  // Phones/compact viewports show only the list first and open a conversation
+  // full-screen; wider screens show list + thread side by side (like WhatsApp).
+  const isMobile = useMediaQuery(`(max-width: ${breakpoints.mobileMax})`);
+  const isMobileRef = useRef(isMobile);
+  isMobileRef.current = isMobile;
+
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [selectedId, setSelectedId] = useState("");
+  // On phones: true while a selected conversation's thread is shown full-screen.
+  const [mobileOpen, setMobileOpen] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -110,7 +130,8 @@ export default function ConversationsDashboard() {
           `[conversations:ui] businessId=${businessId} — received ${Array.isArray(data) ? data.length : "n/a"} raw conversation(s), mapped ${ui.length} UI row(s). First ids: ${ui.slice(0, 5).map((c) => c.id).join(", ") || "(none)"}`,
         );
         setConversations(ui);
-        setSelectedId((current) => current || ui[0]?.id || "");
+        // On phones the first screen is the list, so do not auto-open a thread.
+        setSelectedId((current) => current || (isMobileRef.current ? "" : ui[0]?.id || ""));
         if (ui.length > 0) {
           const first = ui[0];
           console.log(
@@ -143,9 +164,26 @@ export default function ConversationsDashboard() {
 
   const handleSelect = (id: string) => {
     setSelectedId(id);
+    if (isMobile) setMobileOpen(true);
     // Opening a conversation does not clear unread state — the backend has no
     // read-tracking yet, so unread dots never appear.
   };
+
+  // Widening a portrait view is handled like "back to list": the side-by-side
+  // layout replaces the full-screen thread.
+  useEffect(() => {
+    if (!isMobile) setMobileOpen(false);
+  }, [isMobile]);
+
+  // Auto-select the first conversation when the layout widens and nothing is
+  // open yet (mirrors the desktop behavior at load time).
+  useEffect(() => {
+    if (!isMobile && selectedId === "" && conversations.length > 0) {
+      setSelectedId(conversations[0].id);
+    }
+  }, [isMobile, selectedId, conversations]);
+
+  const handleBack = () => setMobileOpen(false);
 
   const handleSendMessage = async (text: string) => {
     if (!selectedId) return;
@@ -180,12 +218,15 @@ export default function ConversationsDashboard() {
       elevation={0}
       sx={{
         bgcolor: tokens.color.surface1,
-        borderRadius: `${tokens.radius.card}px`,
-        border: `0.5px solid ${tokens.color.border}`,
         overflow: "hidden",
         display: "grid",
-        gridTemplateColumns: "260px 1fr",
-        minHeight: 480,
+        // Phones: full-bleed screen filling the viewport below the shell chrome;
+        // wider screens keep the bordered card with list + thread side by side.
+        height: isMobile ? `calc(100dvh - ${MOBILE_CHROME_PX}px)` : undefined,
+        minHeight: isMobile ? 0 : 480,
+        gridTemplateColumns: isMobile ? "1fr" : "260px 1fr",
+        borderRadius: isMobile ? 0 : `${tokens.radius.card}px`,
+        border: isMobile ? "none" : `0.5px solid ${tokens.color.border}`,
       }}
     >
       <Box component="h2" sx={srOnlySx}>
@@ -208,6 +249,21 @@ export default function ConversationsDashboard() {
         >
           {error}
         </Typography>
+      ) : isMobile ? (
+        mobileOpen && selected ? (
+          <ConversationPane
+            conversation={selected}
+            onSendMessage={handleSendMessage}
+            onBack={handleBack}
+          />
+        ) : (
+          <ConversationList
+            mobile
+            conversations={conversations}
+            selectedId={selectedId}
+            onSelect={handleSelect}
+          />
+        )
       ) : (
         <>
           <ConversationList

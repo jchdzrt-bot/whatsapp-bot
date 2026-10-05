@@ -41,6 +41,9 @@ export const tokens = {
   },
 } as const;
 export const breakpoints = {
-  /** Below this width the calendar shows one day at a time (phones/compact). */
-  calendarSingleDayMax: "767.98px",
+  /**
+   * Phones / compact viewports: the calendar collapses to a single day and the
+   * chat section shows either the list or the open thread (WhatsApp-style).
+   */
+  mobileMax: "767.98px",
 } as const;

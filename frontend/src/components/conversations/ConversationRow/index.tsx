@@ -7,10 +7,17 @@ interface ConversationRowProps {
   conversation: Conversation;
   selected: boolean;
   onSelect: () => void;
+  /** Larger touch target when the list renders full-screen on a phone. */
+  mobile?: boolean;
 }
 
 /** One client row in the conversation list: avatar, name, preview, unread dot. */
-export default function ConversationRow({ conversation, selected, onSelect }: ConversationRowProps) {
+export default function ConversationRow({
+  conversation,
+  selected,
+  onSelect,
+  mobile = false,
+}: ConversationRowProps) {
   return (
     <Box
       component="li"
@@ -25,7 +32,7 @@ export default function ConversationRow({ conversation, selected, onSelect }: Co
         }
       }}
       sx={{
-        p: "10px 12px",
+        p: mobile ? "13px 14px" : "10px 12px",
         display: "flex",
         gap: 1.25,
         cursor: "pointer",

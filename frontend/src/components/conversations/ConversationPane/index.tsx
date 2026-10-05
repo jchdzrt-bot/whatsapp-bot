@@ -8,12 +8,15 @@ import { tokens } from "../../tokens";
 interface ConversationPaneProps {
   conversation: Conversation | null;
   onSendMessage: (text: string) => void;
+  /** When provided, the header shows a back arrow (phones full-screen thread). */
+  onBack?: () => void;
 }
 
 /** Right column of the conversations page: header, message thread and composer. */
 export default function ConversationPane({
   conversation,
   onSendMessage,
+  onBack,
 }: ConversationPaneProps) {
   if (!conversation) {
     return (
@@ -35,7 +38,7 @@ export default function ConversationPane({
 
   return (
     <Box sx={{ display: "flex", flexDirection: "column", minWidth: 0 }}>
-      <ConversationHeader conversation={conversation} />
+      <ConversationHeader conversation={conversation} onBack={onBack} />
       <MessageThread messages={conversation.messages} />
       <MessageComposer onSend={onSendMessage} />
     </Box>
