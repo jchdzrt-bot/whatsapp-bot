@@ -32,7 +32,7 @@ export default function ConversationRow({
         }
       }}
       sx={{
-        p: mobile ? "13px 14px" : "10px 12px",
+        p: mobile ? "14px 16px" : "12px 16px",
         display: "flex",
         gap: 1.25,
         cursor: "pointer",

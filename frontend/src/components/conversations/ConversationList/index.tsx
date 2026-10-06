@@ -42,7 +42,7 @@ export default function ConversationList({
         minWidth: 0,
       }}
     >
-      <Box sx={{ p: 1.5, borderBottom: `0.5px solid ${tokens.color.border}` }}>
+      <Box sx={{ px: 2, py: 1.5, borderBottom: `0.5px solid ${tokens.color.border}` }}>
         <TextField
           fullWidth
           size="small"

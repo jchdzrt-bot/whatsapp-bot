@@ -48,6 +48,9 @@ export default function Login() {
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
+    // Ignore rapid double-clicks while a login attempt is already in flight.
+    if (submitting) return;
+
     if (!email.trim() || !password) {
       setErrorMessage("Introduce el correo y la contraseña");
       return;
@@ -60,10 +63,13 @@ export default function Login() {
       const session = await login({ email: email.trim(), password });
       dispatch(authLoggedIn(session));
       navigate("/");
+      // On success the button stays disabled for the whole route transition:
+      // the home loader is still validating the session while the login page
+      // is mounted, so re-enabling here would flash the button. Only a failed
+      // login re-enables the form.
     } catch (error) {
-      setErrorMessage(getLoginErrorMessage(error));
-    } finally {
       setSubmitting(false);
+      setErrorMessage(getLoginErrorMessage(error));
     }
   }
 
@@ -106,6 +112,7 @@ export default function Login() {
             autoComplete="email"
             placeholder="tu@correo.com"
             value={email}
+            disabled={submitting}
             onChange={(event) => setEmail(event.target.value)}
           />
           <TextField
@@ -116,6 +123,7 @@ export default function Login() {
             autoComplete="current-password"
             placeholder="••••••••"
             value={password}
+            disabled={submitting}
             onChange={(event) => setPassword(event.target.value)}
             slotProps={{
               input: {
@@ -142,7 +150,7 @@ export default function Login() {
           type="submit"
           variant="contained"
           fullWidth
-          disabled={submitting}
+          disabled={submitting || alreadyAuthenticated}
           sx={{
             boxSizing: "border-box",
             mt: 2.5,
